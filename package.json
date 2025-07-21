@@ -40,6 +40,7 @@
   },
   "scripts": {},
   "dependencies": {
+    "@types/emscripten": "^1.40.1",
     "@types/node": "*",
     "web-tree-sitter": "^0.25.3"
   },
