@@ -58,7 +58,7 @@ export interface Message {
   key?: string;
 
   /** The API version under which this message operates. */
-  version: 2;
+  version?: number;
 
   /** The text for the message. */
   excerpt: string;

@@ -1,8 +1,10 @@
 import {
   Disposable,
   GrammarRegistry,
+  GrammarToken,
   Range,
   TextBuffer
+  TokenizeLineResult
 } from '../index';
 import type { Language, Node, Query } from 'web-tree-sitter';
 
@@ -255,4 +257,26 @@ export class WASMTreeSitterGrammar {
    * Used by the specs to override a particular query for testing purposes.
    */
   setQueryForTest(queryType: StandardQueryType | CustomQueryType, contents: string): Promise<Query>;
+
+
+  /**
+   * Tokenize all lines in the given text.
+   *
+   * @param text A string containing one or more lines.
+   * @return An array of token arrays for each line tokenized.
+   */
+  tokenizeLines(text: string): GrammarToken[][];
+
+  /**
+   * Tokenizes the line of text.
+   *
+   * @param line A string of text to tokenize.
+   * @param ruleStack An optional array of rules previously returned from this
+   *   method. This should be null when tokenizing the first line in the file.
+   * @param firstLine A optional boolean denoting whether this is the first
+   *   line in the file which defaults to `false`.
+   * @return An object representing the result of the tokenize.
+   */
+  tokenizeLine(line: string, ruleStack?: null, firstLine?: boolean): TokenizeLineResult;
+
 }

@@ -96,7 +96,7 @@ export interface GrammarRegistry {
    * @param scopeName A string such as `source.js`.
    * @return A Grammar or undefined.
    */
-  grammarForScopeName(scopeName: string, parserType: GrammarType): GenericGrammar | undefined;
+  grammarForScopeName(scopeName: string): GenericGrammar | undefined;
 
   /**
    *  Add a grammar to this registry.
