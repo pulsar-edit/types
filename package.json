@@ -35,14 +35,18 @@
   "types": "index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/pulsar-edit/types.git",
-    "directory": "types/atom"
+    "url": "https://github.com/pulsar-edit/types.git"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "tsc --noEmit"
+  },
   "dependencies": {
     "@types/emscripten": "^1.40.1",
     "@types/node": "*",
     "web-tree-sitter": "^0.25.3"
   },
-  "typeScriptVersion": "5.5"
+  "typeScriptVersion": "5.5",
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
 }
