@@ -3,7 +3,7 @@ import {
   GrammarRegistry,
   GrammarToken,
   Range,
-  TextBuffer
+  TextBuffer,
   TokenizeLineResult
 } from '../index';
 import type { Language, Node, Query } from 'web-tree-sitter';
