@@ -227,8 +227,17 @@ export class WASMTreeSitterGrammar {
    */
   getLanguageSync(): Language | null
 
+  /**
+   * Retrieve a `Query` instance by name. Asynchronous.
+   */
   getQuery(queryType: StandardQueryType | CustomQueryType): Promise<Query>
-  getQuerySync(queryType: StandardQueryType | CustomQueryType): Query
+
+  /**
+   * Retrieve a `Query` instance by name.
+   *
+   * Synchronous. Returns `null` if the language itself has not yet loaded.
+   */
+  getQuerySync(queryType: StandardQueryType | CustomQueryType): Query | null
 
   /**
    * Creates an arbitrary Tree-sitter `Query` instance from this grammar’s
@@ -256,8 +265,10 @@ export class WASMTreeSitterGrammar {
    *
    * Used by the specs to override a particular query for testing purposes.
    */
-  setQueryForTest(queryType: StandardQueryType | CustomQueryType, contents: string): Promise<Query>;
-
+  setQueryForTest(
+    queryType: StandardQueryType | CustomQueryType,
+    contents: string
+  ): Promise<Query>;
 
   /**
    * Tokenize all lines in the given text.
@@ -268,7 +279,7 @@ export class WASMTreeSitterGrammar {
   tokenizeLines(text: string): GrammarToken[][];
 
   /**
-   * Tokenizes the line of text.
+   * Tokenize the line of text.
    *
    * @param line A string of text to tokenize.
    * @param ruleStack An optional array of rules previously returned from this
@@ -280,7 +291,7 @@ export class WASMTreeSitterGrammar {
   tokenizeLine(line: string, ruleStack?: null, firstLine?: boolean): TokenizeLineResult;
 
   /**
-   * Tokenizes the line of text.
+   * Tokenize the line of text.
    *
    * @param line A string of text to tokenize.
    * @param ruleStack An optional array of rules previously returned from this
