@@ -4,6 +4,11 @@
   "description": "TypeScript definitions for Pulsar",
   "homepage": "https://github.com/pulsar-edit/types",
   "license": "MIT",
+  "keywords": [
+    "pulsar-edit",
+    "typescript",
+    "types"
+  ],
   "contributors": [
     {
       "name": "GlenCFL",
@@ -45,7 +50,9 @@
     "@types/node": "*",
     "web-tree-sitter": "^0.25.3"
   },
-  "typeScriptVersion": "5.5",
+  "peerDependencies": {
+    "typescript": ">= 4.0.0"
+  },
   "devDependencies": {
     "typescript": "^5.8.3"
   }
