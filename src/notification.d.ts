@@ -55,6 +55,9 @@ export class Notification {
 
   /** Returns the name of the icon used in this notification. */
   getIcon(): string;
+
+  /** Returns the options used when the notification was created. */
+  getOptions(): NotificationOptions;
 }
 
 export interface NotificationOptions {

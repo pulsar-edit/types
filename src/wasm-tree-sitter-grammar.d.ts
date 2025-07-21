@@ -279,4 +279,15 @@ export class WASMTreeSitterGrammar {
    */
   tokenizeLine(line: string, ruleStack?: null, firstLine?: boolean): TokenizeLineResult;
 
+  /**
+   * Tokenizes the line of text.
+   *
+   * @param line A string of text to tokenize.
+   * @param ruleStack An optional array of rules previously returned from this
+   *   method. This should be null when tokenizing the first line in the file.
+   * @param firstLine A optional boolean denoting whether this is the first
+   *   line in the file which defaults to `false`.
+   * @return An object representing the result of the tokenize.
+   */
+  tokenizeLine(line: string, ruleStack: any[], firstLine?: false): TokenizeLineResult;
 }
