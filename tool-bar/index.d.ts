@@ -7,8 +7,9 @@
 import { Disposable, TooltipPlacement } from "../index";
 
 export declare interface ButtonOptions {
-  /** (optional)
-   *  icon name
+  /**
+   *  Icon name.
+   *
    * ## Example:
    * ```js
    * icon: 'octoface',
@@ -16,79 +17,76 @@ export declare interface ButtonOptions {
    */
   icon?: string;
 
-  /** (optional)
-   * icon set name.
-   * It can be chosen among these:
-   *    - not given : if `iconset` is not given Octicons (default Atom's flavour) is  chosen
-   *    - `ion` with `ios-` and `md- `prefixes for the icon names (Ionicons)
-   *    - `fa` and fab for brands (FontAwesome)
-   *    - `fi` (Foundation)
-   *    - `icomoon` (IcoMoon)
-   *    - `devicon` (Devicon)
-   *    - `mdi` (MaterialDesignIcons)
+  /**
+   * Icon set name.
    *
-   * ## Example:
+   * It can be chosen among these:
+   *
+   * - Not given: if `iconset` is not given Octicons (default Pulsar's flavor)
+   *   is chosen
+   * - `ion` with `ios-` and `md- `prefixes for the icon names (Ionicons)
+   * - `fa` and fab for brands (FontAwesome)
+   * - `fi` (Foundation)
+   * - `icomoon` (IcoMoon)
+   * - `devicon` (Devicon)
+   * - `mdi` (MaterialDesignIcons)
+   *
    * ```ts
+   *   {
    *     icon: 'ios-gear-a',
    *     iconset: 'ion'
+   *   }
    * ```
    */
   iconset?: undefined | "ion" | "fa" | "fab" | "fi" | "icomoon" | "devicon" | "mdi";
 
-  /** (optional)
-   * You can use `text` to:
-   * - add text as a button, or
+  /**
+   * You can use `text` to add text for a button or to use HTML for a button
+   * (if `html` is set to `true`).
    *
-   * ## Example:
-   * ```ts
-   * text: 'hello',
-   * ```
-   * - use HTML for a button. Needs `html` to be set to `true`
    *
-   * ## Example:
    * ```ts
-   * text: '<b>BIG</b> button',
-   * html: true,
+   * {
+   *   text: '<b>BIG</b> button',
+   *   html: true,
+   * }
    * ```
    */
   text?: string;
 
-  /** (optional)
-   * if set to `true`, `text` will be rendered as HTML
-   * ## Example:
-   * ```ts
-   * text: '<b>BIG</b> button',
-   * html: true,
-   * ```
+  /**
+   * If set to `true`, `text` will be rendered as HTML.
    */
   html?: boolean;
 
-  /** (mandatory)
-   * The callback must be either:
-   * - Atom command: a string or array of  strings,
-   * - a custom callback function,
-   * - or an object where the keys are key modifiers (alt, ctrl or shift) and
-   * the values are commands or custom functions
+  /**
+   * The callback must be either
+   *
+   * - Pulsar command: a string or array of strings,
+   * - a custom callback function, or
+   * - an object where the keys are key modifiers (`alt`, `ctrl` or `shift`)
+   *   and the values are commands or custom functions.
    *
    * ## Example:
    * ```ts
    * callback: 'application:about',
    * ```
    *
-   *
    * ## Example - Callback with modifiers
    * ```ts
-   * callback: {
-   *    '': 'application:cmd-1',      // Without modifiers is default action
-   *    'alt': 'application:cmd-2',
-   *    'ctrl': 'application:cmd-3',  // With function callback
-   *    'shift'(data) {
-   *      console.log(data);
-   *    },
-   *    'alt+shift': 'application:cmd-5',       // Multiple modifiers
-   *    'alt+ctrl+shift': 'application:cmd-6'   // All modifiers
-   *  },
-   * data: 'foo'
+   * {
+   *    callback: {
+   *     '': 'application:cmd-1',      // Without modifiers is default action
+   *     'alt': 'application:cmd-2',
+   *     'ctrl': 'application:cmd-3',  // With function callback
+   *     'shift'(data) {
+   *       console.log(data);
+   *     },
+   *     'alt+shift': 'application:cmd-5',       // Multiple modifiers
+   *     'alt+ctrl+shift': 'application:cmd-6'   // All modifiers
+   *   },
+   *   data: 'foo'
+   * }
    * ```
    */
   callback:
@@ -109,33 +107,34 @@ export declare interface ButtonOptions {
   /** (optional) defaults to `50` */
   priority?: number;
 
-  /** (optional)
-   * The tooltip option may be a string or an object that is passed to Atom's
+  /**
+   * The tooltip option may be a string or an object that is passed to Pulsar's
    * TooltipManager.
    */
   tooltip?:
-    | string // minimally sets title
-    // similar to what TooltipManager.add options accepts:
-    | { item?: object }
-    | ({
-      title?: string | (() => string);
-      html?: boolean;
-      keyBindingCommand?: string;
-      keyBindingTarget?: HTMLElement;
-    } & {
-      class?: string;
-      placement?: TooltipPlacement | (() => TooltipPlacement);
-      trigger?: "click" | "hover" | "focus" | "manual";
-      delay?: { show: number; hide: number };
-    });
+  | string // minimally sets title
+  // similar to what TooltipManager.add options accepts:
+  | { item?: object }
+  | ({
+    title?: string | (() => string);
+    html?: boolean;
+    keyBindingCommand?: string;
+    keyBindingTarget?: HTMLElement;
+  } & {
+    class?: string;
+    placement?: TooltipPlacement | (() => TooltipPlacement);
+    trigger?: "click" | "hover" | "focus" | "manual";
+    delay?: { show: number; hide: number };
+  });
 
-  /** (optional) Color of the button */
+  /** Color of the button. */
   color?: string;
 
-  /** (optional) Color of the button's background */
+  /** Color of the button's background. */
   background?: string;
 
-  /** Buttons can be styled with arbitrary CSS through classes.
+  /**
+   * Buttons can be styled with arbitrary CSS through classes.
   * An example of how the class can be used is show below.
   *
   * ## Example:
@@ -211,25 +210,26 @@ export declare interface ToolBarManager {
 }
 
 /**
-*  Passed as an input to `consumeToolBar(getToolBar: getToolBarManager)`
-*  function of your package.
-*
-*  In your main package file, add the following methods and replace
-*  your-package-name with your package name.
-* ```ts
-*  let toolBar: ToolBarManager
-*
-*  export function consumeToolBar(getToolBar: getToolBarManager) {
-*   toolBar = getToolBar("packageName");
-*   // Add buttons and spacers here...
-* }
-*
-*  export function deactivate() {
-*   if (toolBar) {
-*     toolBar.removeItems();
-*     toolBar = null;
-*   }
-* }
-* ```
-*/
+ *  Passed as an input to `consumeToolBar(getToolBar: getToolBarManager)`
+ *  function of your package.
+ *
+ *  In your main package file, add the following methods and replace
+ *  your-package-name with your package name.
+ *
+ * ```ts
+ *  let toolBar: ToolBarManager
+ *
+ *  export function consumeToolBar(getToolBar: getToolBarManager) {
+ *   toolBar = getToolBar("packageName");
+ *   // Add buttons and spacers here...
+ * }
+ *
+ *  export function deactivate() {
+ *   if (toolBar) {
+ *     toolBar.removeItems();
+ *     toolBar = null;
+ *   }
+ * }
+ * ```
+ */
 export type getToolBarManager = (packageName: string) => ToolBarManager;

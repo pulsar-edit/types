@@ -28,26 +28,30 @@ export class Point {
   static min(point1: PointCompatible, point2: PointCompatible): Point;
 
   /**
-  *  Compare another Point to this Point instance.
-  *  Returns -1 if this point precedes the argument.
-  *  Returns 0 if this point is equivalent to the argument.
-  *  Returns 1 if this point follows the argument.
-  */
+   * Compare another Point to this Point instance.
+   *
+   * Returns `-1` if this point precedes the argument.
+   *
+   * Returns `0` if this point is equivalent to the argument.
+   *
+   * Returns `1` if this point follows the argument.
+   */
   compare(other: PointCompatible): number;
 
   /**
-  *  Returns a boolean indicating whether this point has the same row and
-  *  column as the given Point.
-  */
+   * Returns a boolean indicating whether this point has the same row and column
+   * as the given Point.
+   */
   isEqual(other: PointCompatible): boolean;
 
-  /** Returns a Boolean indicating whether this point precedes the given Point. */
+  /**
+   * Returns a Boolean indicating whether this point precedes the given Point.
+   */
   isLessThan(other: PointCompatible): boolean;
 
   /**
-  *  Returns a Boolean indicating whether this point precedes or is equal to
-  *  the given Point.
-  */
+   * Returns whether this point precedes or is equal to the given Point.
+   */
   isLessThanOrEqual(other: PointCompatible): boolean;
 
   /** Returns a Boolean indicating whether this point follows the given Point. */
@@ -64,15 +68,15 @@ export class Point {
   freeze(): Readonly<Point>;
 
   /**
-  *  Build and return a new point by adding the rows and columns of the
-  *  given point.
-  */
+   * Build and return a new point by adding the rows and columns of the given
+   * point.
+   */
   translate(other: PointCompatible): Point;
 
   /**
-  *  Build and return a new Point by traversing the rows and columns
-  *  specified by the given point.
-  */
+   * Build and return a new Point by traversing the rows and columns specified
+   * by the given point.
+   */
   traverse(other: PointCompatible): Point;
 
   /** Returns an array of this point's row and column. */

@@ -57,15 +57,15 @@ export interface MarkerLayer {
 
   // Event Subscription
   /**
-  *  Subscribe to be notified asynchronously whenever markers are created,
-  *  updated, or destroyed on this layer.
-  */
+   *  Subscribe to be notified asynchronously whenever markers are created,
+   *  updated, or destroyed on this layer.
+   */
   onDidUpdate(callback: () => void): Disposable;
 
   /**
-  *  Subscribe to be notified synchronously whenever markers are created on
-  *  this layer.
-  */
+   *  Subscribe to be notified synchronously whenever markers are created on
+   *  this layer.
+   */
   onDidCreateMarker(callback: (marker: Marker) => void): Disposable;
 
   /** Subscribe to be notified synchronously when this layer is destroyed. */

@@ -113,11 +113,13 @@ export class WASMTreeSitterLanguageMode {
   onDidChangeHighlighting(callback: (range: Range) => void): Disposable;
 
   /**
-   * Behaves like {@link scopeDescriptorForPosition}, but returns a list of
-   * Tree-sitter node names. Useful for understanding Tree-sitter parsing or
-   * for writing syntax highlighting query files.
+   * Behaves like {@link scopeDescriptorForPosition}, but returns a descriptor
+   * where the "scopes" are Tree-sitter node names.
+   *
+   * Useful for understanding Tree-sitter parsing or for writing syntax
+   * highlighting query files.
    */
-  syntaxTreeScopeDescriptorForPosition(point: PointCompatible): string[];
+  syntaxTreeScopeDescriptorForPosition(point: PointCompatible): ScopeDescriptor;
 
   /**
    * Returns the buffer range for the first scope to match the given scope

@@ -26,15 +26,15 @@ export class Notification {
   getDetail(): string | undefined;
 
   /**
-   * Returns whether this notification is equal to another. Two
-   * notifications are considered to be equal if their message,
-   * type, and detail are equivalent.
+   * Returns whether this notification is equal to another. Two notifications
+   * are considered to be equal if their message, type, and detail are
+   * equivalent.
    */
   isEqual(other: Notification): boolean
 
   /**
-   *  Dismisses the notification, removing it from the UI. Calling this
-   *  programmatically will call all callbacks added via onDidDismiss.
+   * Dismisses the notification, removing it from the UI. Calling this
+   * programmatically will call all callbacks added via onDidDismiss.
    */
   dismiss(): void;
 

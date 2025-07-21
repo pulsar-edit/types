@@ -10,31 +10,33 @@ export class Disposable implements DisposableLike {
   disposalAction?(): void;
 
   /**
-  *  Perform the disposal action, indicating that the resource associated
-  *  with this disposable is no longer needed.
-  */
+   * Perform the disposal action, indicating that the resource associated with
+   * this disposable is no longer needed.
+   */
   dispose(): void;
 }
 
 /**
-*  An object that aggregates multiple Disposable instances together into a
-*  single disposable, so they can all be disposed as a group.
-*/
+ * An object that aggregates multiple Disposable instances together into a
+ * single disposable, so they can all be disposed as a group.
+ */
 export class CompositeDisposable implements DisposableLike {
   /** Construct an instance, optionally with one or more disposables. */
   constructor(...disposables: DisposableLike[]);
 
   /**
-  *  Dispose all disposables added to this composite disposable.
-  *  If this object has already been disposed, this method has no effect.
-  */
+   * Dispose all disposables added to this composite disposable.
+   *
+   * If this object has already been disposed, this method has no effect.
+   */
   dispose(): void;
 
   // Managing Disposables
   /**
-  *  Add disposables to be disposed when the composite is disposed.
-  *  If this object has already been disposed, this method has no effect.
-  */
+   * Add disposables to be disposed when the composite is disposed.
+   *
+   * If this object has already been disposed, this method has no effect.
+   */
   add(...disposables: DisposableLike[]): void;
 
   /** Remove a previously added disposable. */
@@ -44,9 +46,9 @@ export class CompositeDisposable implements DisposableLike {
   delete(disposable: DisposableLike): void;
 
   /**
-  *  Clear all disposables. They will not be disposed by the next call to
-  *  dispose.
-  */
+   * Clear all disposables. They will not be disposed by the next call to
+   * dispose.
+   */
   clear(): void;
 }
 

@@ -9,34 +9,40 @@ export interface Grammar {
   readonly scopeName: string;
 
   // Event Subscription
+
   onDidUpdate(callback: () => void): Disposable;
 
   // Tokenizing
+
   /**
-   *  Tokenize all lines in the given text.
-   *  @param text A string containing one or more lines.
-   *  @return An array of token arrays for each line tokenized.
+   * Tokenize all lines in the given text.
+   *
+   * @param text A string containing one or more lines.
+   * @return An array of token arrays for each line tokenized.
    */
   tokenizeLines(text: string): GrammarToken[][];
 
   /**
-   *  Tokenizes the line of text.
-   *  @param line A string of text to tokenize.
-   *  @param ruleStack An optional array of rules previously returned from this
-   *  method. This should be null when tokenizing the first line in the file.
-   *  @param firstLine A optional boolean denoting whether this is the first line
-   *  in the file which defaults to `false`.
-   *  @return An object representing the result of the tokenize.
+   * Tokenizes the line of text.
+   *
+   * @param line A string of text to tokenize.
+   * @param ruleStack An optional array of rules previously returned from this
+   *   method. This should be null when tokenizing the first line in the file.
+   * @param firstLine A optional boolean denoting whether this is the first
+   *   line in the file which defaults to `false`.
+   * @return An object representing the result of the tokenize.
    */
   tokenizeLine(line: string, ruleStack?: null, firstLine?: boolean): TokenizeLineResult;
+
   /**
-   *  Tokenizes the line of text.
-   *  @param line A string of text to tokenize.
-   *  @param ruleStack An optional array of rules previously returned from this
-   *  method. This should be null when tokenizing the first line in the file.
-   *  @param firstLine A optional boolean denoting whether this is the first line
-   *  in the file which defaults to `false`.
-   *  @return An object representing the result of the tokenize.
+   * Tokenizes the line of text.
+   *
+   * @param line A string of text to tokenize.
+   * @param ruleStack An optional array of rules previously returned from this
+   *   method. This should be null when tokenizing the first line in the file.
+   * @param firstLine A optional boolean denoting whether this is the first
+   *   line in the file which defaults to `false`.
+   * @return An object representing the result of the tokenize.
    */
   tokenizeLine(line: string, ruleStack: GrammarRule[], firstLine?: false): TokenizeLineResult;
 }
@@ -60,17 +66,20 @@ export interface TokenizeLineResult {
   line: string;
 
   /**
-   * An array of integer scope ids and strings. Positive ids indicate the
-   * beginning of a scope, and negative tags indicate the end. To resolve ids
-   * to scope names, call GrammarRegistry::scopeForId with the absolute
-   * value of the id.
+   * An array of integer scope IDs and strings.
+   *
+   * Positive IDs indicate the beginning of a scope, and negative tags indicate
+   * the end.
+   *
+   * To resolve ids to scope names, call {@link GrammarRegistry#scopeForId}
+   * with the absolute value of the id.
    */
   tags: Array<number | string>;
 
   /**
    * This is a dynamic property. Invoking it will incur additional overhead,
-   * but will automatically translate the `tags` into token objects with `value`
-   * and `scopes` properties.
+   * but will automatically translate the `tags` into token objects with
+   * `value` and `scopes` properties.
    */
   tokens: GrammarToken[];
 

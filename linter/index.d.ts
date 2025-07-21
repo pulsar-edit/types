@@ -45,7 +45,10 @@ export interface Message {
     position?: Point;
   };
 
-  /** An HTTP link to a resource explaining the issue. Default is a google search. */
+  /**
+   * An HTTP link to a resource explaining the issue. Default is a google
+   * search.
+   */
   url?: string;
 
   /** The name of the octicon to show in the gutter. */
@@ -70,12 +73,14 @@ export interface Message {
     | (() => Promise<Array<MessageSolution>>);
 
   /**
-   *  Markdown long description of the error. Accepts a callback so that you can
-   *  do things like HTTP requests.
+   * Markdown long description of the error. Accepts a callback so that you can
+   * do things like HTTP requests.
    */
   description?: string | (() => Promise<string> | string);
 
-  /** Optionally override the displayed linter name. Defaults to provider name. */
+  /**
+   * Optionally override the displayed linter name. Defaults to provider name.
+   */
   linterName?: string;
 }
 

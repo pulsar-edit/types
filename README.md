@@ -2,6 +2,14 @@
 
 Type definitions for the [Pulsar API](https://docs.pulsar-edit.dev/api/pulsar/latest/).
 
+Also includes some type definitions from notable builtin and community packages:
+
+* `autocomplete-plus`
+* `status-bar`
+* `tool-bar`
+* `linter`
+* `atom-i18n`
+
 Migrated from [@types/atom](https://www.npmjs.com/package/@types/atom) and updated to reflect new and changed APIs in Pulsar.
 
 Install these types under `devDependencies` if you’re writing a community package in TypeScript (or even in JavaScript if you want better autocompletion and inline documentation).

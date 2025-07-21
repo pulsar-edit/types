@@ -34,8 +34,8 @@ export class Range {
   isEmpty(): boolean;
 
   /**
-  *  Returns a boolean indicating whether this range starts and ends on the
-  *  same row.
+  * Returns a boolean indicating whether this range starts and ends on the same
+  * row.
   */
   isSingleLine(): boolean;
 
@@ -47,8 +47,8 @@ export class Range {
 
   // Operations
   /**
-  *  Freezes the range and its start and end point so it becomes immutable
-  *  and returns itself.
+  * Freezes the range and its start and end point so it becomes immutable and
+  * returns itself.
   */
   freeze(): Readonly<Range>;
 
@@ -57,37 +57,40 @@ export class Range {
   union(other: RangeLike): Range;
 
   /**
-  *  Build and return a new range by translating this range's start and end
-  *  points by the given delta(s).
+  * Build and return a new range by translating this range's start and end
+  * points by the given delta(s).
   */
   translate(startDelta: PointCompatible, endDelta?: PointCompatible): Range;
 
   /**
-  *  Build and return a new range by traversing this range's start and end
-  *  points by the given delta.
+  * Build and return a new range by traversing this range's start and end
+  * points by the given delta.
   */
   traverse(delta: PointCompatible): Range;
 
   // Comparison
   /**
-  *  Compare two Ranges.
-  *  Returns -1 if this range starts before the argument or contains it.
-  *  Returns 0 if this range is equivalent to the argument.
-  *  Returns 1 if this range starts after the argument or is contained by it.
-  */
+   * Compare two Ranges.
+   *
+   * Returns `-1` if this range starts before the argument or contains it.
+   *
+   * Returns `0` if this range is equivalent to the argument.
+   *
+   * Returns `1` if this range starts after the argument or is contained by it.
+   */
   compare(otherRange: RangeCompatible): number;
 
   /**
-  *  Returns a Boolean indicating whether this range has the same start and
-  *  end points as the given Range.
-  */
+   * Returns a Boolean indicating whether this range has the same start and end
+   * points as the given Range.
+   */
   isEqual(otherRange: RangeCompatible): boolean;
 
   // NOTE: this function doesn't actually take a range-compatible parameter.
   /**
-  *  Returns a Boolean indicating whether this range starts and ends on the
-  *  same row as the argument.
-  */
+   * Returns a Boolean indicating whether this range starts and ends on the
+   * same row as the argument.
+   */
   coversSameRows(otherRange: RangeLike): boolean;
 
   // NOTE: this function doesn't actually take a range-compatible parameter.
@@ -101,15 +104,15 @@ export class Range {
   containsPoint(point: PointCompatible, exclusive?: boolean): boolean;
 
   /**
-  *  Returns a boolean indicating whether this range intersects the given
-  *  row number.
-  */
+   * Returns a boolean indicating whether this range intersects the given row
+   * number.
+   */
   intersectsRow(row: number): boolean;
 
   /**
-  *  Returns a boolean indicating whether this range intersects the row range
-  *  indicated by the given startRow and endRow numbers.
-  */
+   * Returns a boolean indicating whether this range intersects the row range
+   * indicated by the given startRow and endRow numbers.
+   */
   intersectsRowRange(startRow: number, endRow: number): boolean;
 
   // Conversion
@@ -117,13 +120,16 @@ export class Range {
   toString(): string;
 }
 
-/** The types usable when constructing a range via the Range::fromObject method. */
+/**
+ * The types usable when constructing a range via the {@link Range#fromObject}
+ * method.
+ */
 export type RangeCompatible =
-| RangeLike
-| [PointLike, PointLike]
-| [PointLike, [number, number]]
-| [[number, number], PointLike]
-| [[number, number], [number, number]];
+  | RangeLike
+  | [PointLike, PointLike]
+  | [PointLike, [number, number]]
+  | [[number, number], PointLike]
+  | [[number, number], [number, number]];
 
 /** The interface that should be implemented for all "range-compatible" objects. */
 export interface RangeLike {

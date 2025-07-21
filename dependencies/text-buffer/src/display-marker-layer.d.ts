@@ -1,12 +1,17 @@
 import { Disposable } from "../../../index";
-import { DisplayMarker, Marker, PointCompatible, RangeCompatible } from "./text-buffer";
+import {
+  DisplayMarker,
+  Marker,
+  PointCompatible,
+  RangeCompatible
+} from "./text-buffer";
 
 /**
-*  Experimental: A container for a related set of markers at the DisplayLayer level.
-*  Wraps an underlying MarkerLayer on the TextBuffer.
-*
-*  This API is experimental and subject to change on any release.
-*/
+ * Experimental: A container for a related set of markers at the DisplayLayer
+ * level. Wraps an underlying MarkerLayer on the TextBuffer.
+ *
+ * This API is experimental and subject to change on any release.
+ */
 export interface DisplayMarkerLayer {
   /** The identifier for the underlying MarkerLayer. */
   readonly id: string;
@@ -26,17 +31,18 @@ export interface DisplayMarkerLayer {
   onDidDestroy(callback: () => void): Disposable;
 
   /**
-  *  Subscribe to be notified asynchronously whenever markers are created, updated,
-  *  or destroyed on this layer. Prefer this method for optimal performance when
-  *  interacting with layers that could contain large numbers of markers.
-  */
+   * Subscribe to be notified asynchronously whenever markers are created,
+   * updated, or destroyed on this layer. Prefer this method for optimal
+   * performance when interacting with layers that could contain large numbers
+   * of markers.
+   */
   onDidUpdate(callback: () => void): Disposable;
 
   /**
-  *  Subscribe to be notified synchronously whenever markers are created on this
-  *  layer. Avoid this method for optimal performance when interacting with layers
-  *  that could contain large numbers of markers.
-  */
+   * Subscribe to be notified synchronously whenever markers are created on
+   * this layer. Avoid this method for optimal performance when interacting
+   * with layers that could contain large numbers of markers.
+   */
   onDidCreateMarker(callback: (marker: DisplayMarker | Marker) => void): Disposable;
 
   // Marker creation
@@ -52,9 +58,9 @@ export interface DisplayMarkerLayer {
   ): DisplayMarker;
 
   /**
-  *  Create a marker on this layer with its head at the given screen position
-  *  and no tail.
-  */
+   * Create a marker on this layer with its head at the given screen position
+   * and no tail.
+   */
   markScreenPosition(
     screenPosition: PointCompatible,
     options?: {
@@ -75,9 +81,9 @@ export interface DisplayMarkerLayer {
   ): DisplayMarker;
 
   /**
-  *  Create a marker on this layer with its head at the given buffer position
-  *  and no tail.
-  */
+   * Create a marker on this layer with its head at the given buffer position
+   * and no tail.
+   */
   markBufferPosition(
     bufferPosition: PointCompatible,
     options?: {
@@ -97,13 +103,13 @@ export interface DisplayMarkerLayer {
   getMarkerCount(): number;
 
   /**
-  *  Find markers in the layer conforming to the given parameters.
-  *
-  *  This method finds markers based on the given properties. Markers can be associated
-  *  with custom properties that will be compared with basic equality. In addition,
-  *  there are several special properties that will be compared with the range of the
-  *  markers rather than their properties.
-  */
+   * Find markers in the layer conforming to the given parameters.
+   *
+   * This method finds markers based on the given properties. Markers can be
+   * associated with custom properties that will be compared with basic
+   * equality. In addition, there are several special properties that will be
+   * compared with the range of the markers rather than their properties.
+   */
   findMarkers(properties: FindDisplayMarkerOptions): DisplayMarker[];
 }
 
@@ -145,15 +151,15 @@ export interface FindDisplayMarkerOptions {
   endScreenRow?: number | undefined;
 
   /**
-  *  Only include markers intersecting this Array of [startRow, endRow] in
-  *  buffer coordinates.
-  */
+   * Only include markers intersecting this Array of [startRow, endRow] in
+   * buffer coordinates.
+   */
   intersectsBufferRowRange?: [number, number] | undefined;
 
   /**
-  *  Only include markers intersecting this Array of [startRow, endRow] in
-  *  screen coordinates.
-  */
+   * Only include markers intersecting this Array of [startRow, endRow] in
+   * screen coordinates.
+   */
   intersectsScreenRowRange?: [number, number] | undefined;
 
   /** Only include markers containing this Range in buffer coordinates. */

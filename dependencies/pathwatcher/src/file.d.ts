@@ -2,15 +2,17 @@ import { ReadStream, WriteStream } from "fs";
 import { Disposable } from "../../../index";
 import { Directory } from "./directory";
 
-/** Represents an individual file that can be watched, read from, and written to. */
+/**
+ * Represents an individual file that can be watched, read from, and written to.
+ */
 export class File {
   // Construction
   /** Configures a new File instance, no files are accessed. */
   constructor(filePath: string, symlink?: boolean);
 
   /**
-   *  Creates the file on disk that corresponds to ::getPath() if no such file
-   *  already exists.
+   * Creates the file on disk that corresponds to {@link getPath} if no such
+   * file already exists.
    */
   create(): Promise<boolean>;
 
@@ -25,9 +27,9 @@ export class File {
   onDidDelete(callback: () => void): Disposable;
 
   /**
-   *  Invoke the given callback when there is an error with the watch. When
-   *  your callback has been invoked, the file will have unsubscribed from the
-   *  file watches.
+   * Invoke the given callback when there is an error with the watch. When your
+   * callback has been invoked, the file will have unsubscribed from the file
+   * watches.
    */
   onWillThrowWatchError(callback: (event: PathWatchErrorThrownEvent) => void): Disposable;
 
@@ -42,12 +44,12 @@ export class File {
   isSymbolicLink(): boolean;
 
   /**
-   *  Returns a promise that resolves to a boolean, true if the file exists,
-   *  false otherwise.
+   * Returns a promise that resolves to a boolean — `true` if the file exists,
+   * `false` otherwise.
    */
   exists(): Promise<boolean>;
 
-  /** Returns a boolean, true if the file exists, false otherwise. */
+  /** Returns a boolean, `true` if the file exists, `false` otherwise. */
   existsSync(): boolean;
 
   /** Get the SHA-1 digest of this file. */
@@ -59,10 +61,11 @@ export class File {
   /** Sets the file's character set encoding name. */
   setEncoding(encoding: string): void;
 
-  /** Returns the string encoding name for this file (default: "utf8"). */
+  /** Returns the string encoding name for this file (default: `"utf8"`). */
   getEncoding(): string;
 
   // Managing Paths
+
   /** Returns the string path for the file. */
   getPath(): string;
 
@@ -70,9 +73,9 @@ export class File {
   getRealPathSync(): string;
 
   /**
-  *  Returns a promise that resolves to the file's completely resolved
-  *  string path.
-  */
+   * Returns a promise that resolves to the file's completely resolved string
+   * path.
+   */
   getRealPath(): Promise<string>;
 
   /** Return the string filename without any directory information. */
@@ -104,8 +107,9 @@ export interface PathWatchErrorThrownEvent {
   error: Error;
 
   /**
-   *  Call this function to indicate you have handled the error.
-   *  The error will not be thrown if this function is called.
+   * Call this function to indicate you have handled the error.
+   *
+   * The error will not be thrown if this function is called.
    */
   handle(): void;
 }

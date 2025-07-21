@@ -8,8 +8,8 @@ export class Directory {
     constructor(directoryPath: string, symlink?: boolean);
 
     /**
-     *  Creates the directory on disk that corresponds to ::getPath() if no such
-     *  directory already exists.
+     * Creates the directory on disk that corresponds to ::getPath() if no such
+     * directory already exists.
      */
     create(mode?: number): Promise<boolean>;
 
@@ -28,8 +28,8 @@ export class Directory {
     isSymbolicLink(): boolean;
 
     /**
-     *  Returns a promise that resolves to a boolean, true if the directory
-     *  exists, false otherwise.
+     * Returns a promise that resolves to a boolean, true if the directory
+     * exists, false otherwise.
      */
     exists(): Promise<boolean>;
 
@@ -37,21 +37,22 @@ export class Directory {
     existsSync(): boolean;
 
     /**
-     *  Return a boolean, true if this Directory is the root directory of the
-     *  filesystem, or false if it isn't.
+     * Returns a boolean: `true` if this Directory is the root directory of the
+     * filesystem, or `false` if it isn't.
      */
     isRoot(): boolean;
 
     // Managing Paths
+
     /**
-     *  This may include unfollowed symlinks or relative directory entries.
-     *  Or it may be fully resolved, it depends on what you give it.
+     * This may include unfollowed symlinks or relative directory entries. Or
+     * it may be fully resolved, it depends on what you give it.
      */
     getPath(): string;
 
     /**
-     *  All relative directory entries are removed and symlinks are resolved to
-     *  their final destination.
+     * All relative directory entries are removed and symlinks are resolved to
+     * their final destination.
      */
     getRealPathSync(): string;
 
@@ -66,14 +67,17 @@ export class Directory {
     getParent(): Directory;
 
     /**
-     *  Traverse within this Directory to a child File. This method doesn't actually
-     *  check to see if the File exists, it just creates the File object.
+     * Traverse within this Directory to a child File. This method doesn't
+     * actually check to see if the File exists, it just creates the File
+     * object.
      */
     getFile(filename: string): File;
 
     /**
-     *  Traverse within this a Directory to a child Directory. This method doesn't actually
-     *  check to see if the Directory exists, it just creates the Directory object.
+     * Traverse within this a Directory to a child Directory.
+     *
+     * This method doesn't actually check to see if the Directory exists, it
+     * just creates the Directory object.
      */
     getSubdirectory(dirname: string): Directory;
 
@@ -84,9 +88,11 @@ export class Directory {
     getEntries(callback: (error: Error | null, entries: Array<File | Directory>) => void): void;
 
     /**
-     *  Determines if the given path (real or symbolic) is inside this directory. This
-     *  method does not actually check if the path exists, it just checks if the path
-     *  is under this directory.
+     * Determines if the given path (real or symbolic) is inside this
+     * directory.
+     *
+     * This method does not actually check if the path exists, it just checks
+     * if the path is under this directory.
      */
     contains(pathToCheck: string): boolean;
 }

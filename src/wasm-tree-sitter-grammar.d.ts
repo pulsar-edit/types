@@ -1,4 +1,9 @@
-import { Disposable, GrammarRegistry, Range, TextBuffer } from '../index';
+import {
+  Disposable,
+  GrammarRegistry,
+  Range,
+  TextBuffer
+} from '../index';
 import type { Language, Node, Query } from 'web-tree-sitter';
 
 /**
@@ -20,7 +25,12 @@ export type CommentDelimiterSpec = {
 }
 
 /** A "standard" type of query used by Pulsar. */
-type StandardQueryType = 'highlightsQuery' | 'foldsQuery' | 'tagsQuery' | 'indentsQuery'
+type StandardQueryType =
+  | 'highlightsQuery'
+  | 'foldsQuery'
+  | 'tagsQuery'
+  | 'indentsQuery'
+
 /**
  * An arbitrary query name that can be used by a community package.
  */
@@ -216,7 +226,7 @@ export class WASMTreeSitterGrammar {
   getLanguageSync(): Language | null
 
   getQuery(queryType: StandardQueryType | CustomQueryType): Promise<Query>
-  getQuerySync (queryType: StandardQueryType | CustomQueryType): Query
+  getQuerySync(queryType: StandardQueryType | CustomQueryType): Query
 
   /**
    * Creates an arbitrary Tree-sitter `Query` instance from this grammar’s
@@ -245,5 +255,4 @@ export class WASMTreeSitterGrammar {
    * Used by the specs to override a particular query for testing purposes.
    */
   setQueryForTest(queryType: StandardQueryType | CustomQueryType, contents: string): Promise<Query>;
-
 }

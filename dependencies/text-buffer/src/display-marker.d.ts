@@ -9,20 +9,23 @@ import {
 } from "./text-buffer";
 
 /**
-*  Represents a buffer annotation that remains logically stationary even as the
-*  buffer changes. This is used to represent cursors, folds, snippet targets,
-*  misspelled words, and anything else that needs to track a logical location
-*  in the buffer over time.
-*/
+ * Represents a buffer annotation that remains logically stationary even as the
+ * buffer changes. This is used to represent cursors, folds, snippet targets,
+ * misspelled words, and anything else that needs to track a logical location
+ * in the buffer over time.
+ */
 export interface DisplayMarker {
   // Construction and Destruction
   /**
-  *  Destroys the marker, causing it to emit the 'destroyed' event. Once destroyed,
-  *  a marker cannot be restored by undo/redo operations.
-  */
+   * Destroys the marker, causing it to emit the 'destroyed' event. Once
+   * destroyed, a marker cannot be restored by undo/redo operations.
+   */
   destroy(): void;
 
-  /** Creates and returns a new DisplayMarker with the same properties as this marker. */
+  /**
+   * Creates and returns a new DisplayMarker with the same properties as this
+   * marker.
+   */
   copy(options?: CopyMarkerOptions): DisplayMarker;
 
   // Event Subscription
@@ -34,31 +37,32 @@ export interface DisplayMarker {
 
   // TextEditorMarker Details
   /**
-  *  Returns a boolean indicating whether the marker is valid. Markers can be
-  *  invalidated when a region surrounding them in the buffer is changed.
-  */
+   * Returns a boolean indicating whether the marker is valid. Markers can be
+   * invalidated when a region surrounding them in the buffer is changed.
+   */
   isValid(): boolean;
 
   /**
-  *  Returns a boolean indicating whether the marker has been destroyed. A marker
-  *  can be invalid without being destroyed, in which case undoing the invalidating
-  *  operation would restore the marker.
-  */
+   * Returns a boolean indicating whether the marker has been destroyed. A
+   * marker can be invalid without being destroyed, in which case undoing the
+   * invalidating operation would restore the marker.
+   */
   isDestroyed(): boolean;
 
   /** Returns a boolean indicating whether the head precedes the tail. */
   isReversed(): boolean;
 
   /**
-  *  Returns a boolean indicating whether changes that occur exactly at the marker's
-  *  head or tail cause it to move.
-  */
+   * Returns a boolean indicating whether changes that occur exactly at the
+   * marker's head or tail cause it to move.
+   */
   isExclusive(): boolean;
 
   /**
-  *  Get the invalidation strategy for this marker.
-  *  Valid values include: never, surround, overlap, inside, and touch.
-  */
+   * Get the invalidation strategy for this marker.
+   *
+   * Valid values include: never, surround, overlap, inside, and touch.
+   */
   getInvalidationStrategy(): string;
 
   /** Returns an Object containing any custom properties associated with the marker. */
@@ -75,9 +79,9 @@ export interface DisplayMarker {
   compare(other: DisplayMarker): number;
 
   /**
-  *  Returns a boolean indicating whether this marker is equivalent to another
-  *  marker, meaning they have the same range and options.
-  */
+   * Returns a boolean indicating whether this marker is equivalent to another
+   * marker, meaning they have the same range and options.
+   */
   isEqual(other: DisplayMarker): boolean;
 
   // Managing the marker's range
@@ -97,15 +101,15 @@ export interface DisplayMarker {
   ): void;
 
   /**
-  *  Retrieves the screen position of the marker's start. This will always be
-  *  less than or equal to the result of DisplayMarker::getEndScreenPosition.
-  */
+   * Retrieves the screen position of the marker's start. This will always be
+   * less than or equal to the result of DisplayMarker::getEndScreenPosition.
+   */
   getStartScreenPosition(options?: { clipDirection: "backward" | "forward" | "closest" }): Point;
 
   /**
-  *  Retrieves the screen position of the marker's end. This will always be
-  *  greater than or equal to the result of DisplayMarker::getStartScreenPosition.
-  */
+   * Retrieves the screen position of the marker's end. This will always be
+   * greater than or equal to the result of {@link getStartScreenPosition}.
+   */
   getEndScreenPosition(options?: { clipDirection: "backward" | "forward" | "closest" }): Point;
 
   /** Retrieves the buffer position of the marker's head. */
@@ -139,31 +143,32 @@ export interface DisplayMarker {
   ): void;
 
   /**
-  *  Retrieves the buffer position of the marker's start. This will always be less
-  *  than or equal to the result of DisplayMarker::getEndBufferPosition.
-  */
+   * Retrieves the buffer position of the marker's start. This will always be
+   * less than or equal to the result of DisplayMarker::getEndBufferPosition.
+   */
   getStartBufferPosition(): Point;
 
   /**
-  *  Retrieves the buffer position of the marker's end. This will always be greater
-  *  than or equal to the result of DisplayMarker::getStartBufferPosition.
-  */
+   * Retrieves the buffer position of the marker's end. This will always be
+   * greater than or equal to the result of
+   * DisplayMarker::getStartBufferPosition.
+   */
   getEndBufferPosition(): Point;
 
   /** Returns a boolean indicating whether the marker has a tail. */
   hasTail(): boolean;
 
   /**
-  *  Plants the marker's tail at the current head position. After calling the
-  *  marker's tail position will be its head position at the time of the call,
-  *  regardless of where the marker's head is moved.
-  */
+   * Plants the marker's tail at the current head position. After calling the
+   * marker's tail position will be its head position at the time of the call,
+   * regardless of where the marker's head is moved.
+   */
   plantTail(): void;
 
   /**
-  *  Removes the marker's tail. After calling the marker's head position will be
-  *  reported as its current tail position until the tail is planted again.
-  */
+   * Removes the marker's tail. After calling the marker's head position will
+   * be reported as its current tail position until the tail is planted again.
+   */
   clearTail(): void;
 }
 
@@ -205,20 +210,21 @@ export interface DisplayMarkerChangedEvent {
   hasTail: boolean;
 
   /**
-  *  -DEPRECATED- Object containing the marker's custom properties before the change.
-  *  @deprecated
-  */
+   *  Object containing the marker's custom properties before the change.
+   *  @deprecated
+   */
   oldProperties: object;
 
   /**
-  *  -DEPRECATED- Object containing the marker's custom properties after the change.
-  *  @deprecated
-  */
+   * Object containing the marker's custom properties after the change.
+   * @deprecated
+   */
   newProperties: object;
 
   /**
-  *  Boolean indicating whether this change was caused by a textual change to the
-  *  buffer or whether the marker was manipulated directly via its public API.
-  */
+   * Boolean indicating whether this change was caused by a textual change to
+   * the buffer or whether the marker was manipulated directly via its public
+   * API.
+   */
   textChanged: boolean;
 }

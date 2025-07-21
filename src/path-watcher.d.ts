@@ -2,21 +2,25 @@ import { Disposable, DisposableLike, FilesystemChangeEvent } from "../index";
 
 /** Manage a subscription to filesystem events that occur beneath a root directory. */
 export interface PathWatcher extends DisposableLike {
-    /**
-     *  Return a Promise that will resolve when the underlying native watcher is
-     *  ready to begin sending events.
-     */
-    getStartPromise(): Promise<void>;
+  /**
+   *  Return a Promise that will resolve when the underlying native watcher is
+   *  ready to begin sending events.
+   */
+  getStartPromise(): Promise<void>;
 
-    /** Invokes a function when any errors related to this watcher are reported. */
-    onDidError(callback: (error: Error) => void): Disposable;
+  /** Invokes a function when any errors related to this watcher are reported. */
+  onDidError(callback: (error: Error) => void): Disposable;
 
-    /**
-     *  Unsubscribe all subscribers from filesystem events. Native resources will be
-     *  released asynchronously, but this watcher will stop broadcasting events
-     *  immediately.
-     */
-    dispose(): void;
+  /**
+   *  Unsubscribe all subscribers from filesystem events. Native resources will be
+   *  released asynchronously, but this watcher will stop broadcasting events
+   *  immediately.
+   */
+  dispose(): void;
+}
+
+interface PathWatcherOptions {
+  // No options currently defined.
 }
 
 /**
@@ -25,7 +29,7 @@ export interface PathWatcher extends DisposableLike {
  *  Project::onDidChangeFiles instead.
  */
 export function watchPath(
-    rootPath: string,
-    options: {},
-    eventCallback: (events: FilesystemChangeEvent) => void,
+  rootPath: string,
+  options: PathWatcherOptions,
+  eventCallback: (events: FilesystemChangeEvent) => void,
 ): Promise<PathWatcher>;
