@@ -19,6 +19,7 @@ import {
   ViewRegistry,
   WindowLoadSettings,
   Workspace,
+  UI
 } from "../index";
 
 /**
@@ -80,6 +81,9 @@ export interface AtomEnvironment {
 
   /** A TextEditorRegistry instance. */
   readonly textEditors: TextEditorRegistry;
+
+  /** A UI module. */
+  readonly ui: UI;
 
   // Event Subscription
   /** Invoke the given callback whenever ::beep is called. */

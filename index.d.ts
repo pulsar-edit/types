@@ -62,6 +62,7 @@ export * from "./src/theme-manager";
 export * from "./src/tooltip";
 export * from "./src/tooltip-manager";
 export * from "./src/view-registry";
+export * from "./src/ui";
 export { WASMTreeSitterGrammar } from './src/wasm-tree-sitter-grammar';
 export { WASMTreeSitterLanguageMode } from './src/wasm-tree-sitter-language-mode';
 export * from "./src/workspace";

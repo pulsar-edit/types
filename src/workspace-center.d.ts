@@ -111,4 +111,7 @@ export interface WorkspaceCenter {
 
   /** Destroy (close) the active pane. */
   destroyActivePane(): void;
+
+  /** Activate the active pane. */
+  activate(): void;
 }
