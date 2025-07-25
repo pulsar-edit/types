@@ -40,6 +40,11 @@ type ConfigSchemaForString = {
   default?: string
 }
 
+type ConfigSchemaForColor = {
+  type: 'color'
+  default?: string
+}
+
 type ConfigSchemaForArray<SubType = unknown> = ConfigSchemaBase & {
   type: 'array'
   default?: SubType[]
