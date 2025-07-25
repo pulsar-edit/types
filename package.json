@@ -38,6 +38,16 @@
   ],
   "main": "",
   "types": "index.d.ts",
+  "typesVersions": {
+    "*": {
+      "*": ["index.d.ts"],
+      "atom": ["atom.d.ts"]
+    }
+  },
+  "files": [
+    "index.d.ts",
+    "atom.d.ts"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/pulsar-edit/types.git"
