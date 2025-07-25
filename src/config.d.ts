@@ -35,6 +35,11 @@ type ConfigSchemaForBoolean = ConfigSchemaBase & {
   default?: boolean
 }
 
+type ConfigSchemaForString = {
+  type: 'string'
+  default?: string
+}
+
 type ConfigSchemaForArray<SubType = unknown> = ConfigSchemaBase & {
   type: 'array'
   default?: SubType[]
