@@ -1,5 +1,51 @@
 import { ConfigValues, Disposable, ScopeDescriptor } from "../index";
 
+type ConfigSchemaType = 'integer' | 'boolean' | 'array' | 'object' | 'color' | 'string' | 'number'
+
+export type ConfigSchema =
+  | ConfigSchemaForInteger
+  | ConfigSchemaForNumber
+  | ConfigSchemaForBoolean
+  | ConfigSchemaForArray
+  | ConfigSchemaForString
+  | ConfigSchemaForColor
+  | ConfigSchemaForObject
+
+type ConfigSchemaBase = {
+  title?: string
+  description?: string
+}
+
+type ConfigSchemaForInteger = ConfigSchemaBase & {
+  type: 'integer'
+  default?: number
+  minimum?: number
+  maximum?: number
+}
+
+type ConfigSchemaForNumber = ConfigSchemaBase & {
+  type: 'number'
+  default?: number
+  minimum?: number
+  maximum?: number
+}
+
+type ConfigSchemaForBoolean = ConfigSchemaBase & {
+  type: 'boolean'
+  default?: boolean
+}
+
+type ConfigSchemaForArray<SubType = unknown> = ConfigSchemaBase & {
+  type: 'array'
+  default?: SubType[]
+  items: ConfigSchema
+}
+
+type ConfigSchemaForObject = ConfigSchemaBase & {
+  type: 'object'
+  properties: Record<string, ConfigSchema>
+}
+
 /** Used to access all of Atom's configuration details. */
 export interface Config {
   // Config Subscription
@@ -96,7 +142,7 @@ export interface Config {
    * The schema will tell you what type the keyPath expects, and other metadata
    * about the config option.
    */
-  getSchema(keyPath: string): object | null;
+  getSchema(keyPath: string): ConfigSchema | null;
 
   /** Get the string path to the config file being used. */
   getUserConfigPath(): string;

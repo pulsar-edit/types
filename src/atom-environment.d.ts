@@ -22,6 +22,7 @@ import {
   UI
 } from "../index";
 
+
 /**
 *  Atom global for dealing with packages, themes, menus, and the window.
 *  An instance of this class is always available as the atom global.
