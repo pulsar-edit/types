@@ -46,7 +46,12 @@
     }
   },
   "exports": {
-    "./*": { "types": "./*" }
+    ".": {
+      "types": "./index.d.ts"
+    },
+    "./autocomplete-plus": {
+      "types": "./autocomplete-plus/index.d.ts"
+    }
   },
   "repository": {
     "type": "git",
