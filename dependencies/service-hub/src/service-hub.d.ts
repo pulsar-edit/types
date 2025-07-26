@@ -1,4 +1,4 @@
-import { Disposable } from 'atom';
+import { Disposable } from '../../event-kit';
 import { Consumer } from './consumer';
 import { Provider } from './provider';
 import { Service } from './util';

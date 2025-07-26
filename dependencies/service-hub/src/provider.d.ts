@@ -1,4 +1,4 @@
-import { CompositeDisposable, Disposable } from "../../event-kit";
+import { CompositeDisposable } from "../../event-kit";
 import { SemVer } from 'semver';
 import { Service } from './util';
 import { Consumer } from './consumer';
