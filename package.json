@@ -48,6 +48,23 @@
       ]
     }
   },
+  "exports": {
+    ".": {
+      "types": "./index.d.ts"
+    },
+    "./autocomplete-plus": {
+      "types": "./autocomplete-plus/index.d.ts"
+    },
+    "./linter": {
+      "types": "./linter/index.d.ts"
+    },
+    "./status-bar": {
+      "types": "./status-bar/index.d.ts"
+    },
+    "./tool-bar": {
+      "types": "./tool-bar/index.d.ts"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/pulsar-edit/types.git"
