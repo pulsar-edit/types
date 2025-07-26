@@ -48,30 +48,40 @@ class Matcher {
   setCandidates(candidates: string[]): void;
 }
 
+interface Markdown {
+  /**
+   * Render a Markdown document as HTML.
+   */
+  render(content: string, options?: MarkdownRenderOptions): string;
+
+  /**
+   * Apply Pulsar's built-in syntax highlighting system to code blocks within
+   * Markdown. Modifies the given `DocumentFragment`.
+   */
+  applySyntaxHighlighting(
+    content: DocumentFragment,
+    options?: ApplySyntaxHighlightingOptions
+  ): Promise<HTMLElement>;
+
+  /**
+   * Convert a string of HTML into a `DocumentFragment`.
+   */
+  convertToDOM(content: string): DocumentFragment;
+}
+
+interface FuzzyMatcher {
+  setCandidates(candidates: string[]): Matcher;
+  setCandidates(matcher: Matcher, candidates: string[]): Matcher;
+
+  score(candidate: string, query: string, options?: MatcherOptions): number;
+  match(candidate: string, query: string, options?: MatcherOptions): MatchResult;
+}
+
 export interface UI {
   /**
    * Utility methods for converting Markdown to HTML.
    */
-  markdown: {
-    /**
-     * Render a Markdown document as HTML.
-     */
-    render(content: string, options?: MarkdownRenderOptions): string;
-
-    /**
-     * Apply Pulsar's built-in syntax highlighting system to code blocks within
-     * Markdown. Modifies the given `DocumentFragment`.
-     */
-    applySyntaxHighlighting(
-      content: DocumentFragment,
-      options?: ApplySyntaxHighlightingOptions
-    ): Promise<HTMLElement>;
-
-    /**
-     * Convert a string of HTML into a `DocumentFragment`.
-     */
-    convertToDOM(content: string): DocumentFragment;
-  },
+  markdown: Markdown,
 
   /**
    * The fuzzy-matcher API – just like the one used in `autocomplete-plus`,
@@ -87,11 +97,5 @@ export interface UI {
    * single candidate; it uses the same API and options as
    * {@link Matcher#match}.
    */
-  fuzzyMatcher: {
-    setCandidates(candidates: string[]): Matcher;
-    setCandidates(matcher: Matcher, candidates: string[]): Matcher;
-
-    score(candidate: string, query: string, options?: MatcherOptions): number;
-    match(candidate: string, query: string, options?: MatcherOptions): MatchResult;
-  }
+  fuzzyMatcher: FuzzyMatcher
 };
