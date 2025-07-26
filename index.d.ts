@@ -3,7 +3,6 @@
 // https://github.com/pulsar-edit/pulsar/blob/v1.128.0/exports/atom.js
 
 /// <reference types="node" />
-/// <reference path="./atom.d.ts" />
 
 import { AtomEnvironment } from "./src/atom-environment";
 import { TextEditorElement } from "./src/text-editor-element";
