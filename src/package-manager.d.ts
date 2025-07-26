@@ -1,7 +1,9 @@
-import { Disposable, Package } from "../index";
+import { Disposable, Package, ServiceHub } from "../index";
 
 /** Package manager for coordinating the lifecycle of Atom packages. */
 export interface PackageManager {
+  serviceHub: ServiceHub;
+
   // Event Subscription
   /** Invoke the given callback when all packages have been loaded. */
   onDidLoadInitialPackages(callback: () => void): Disposable;

@@ -36,12 +36,16 @@
       "url": "https://github.com/savetheclocktower"
     }
   ],
-  "main": "",
-  "types": "index.d.ts",
+  "main": "./index.d.ts",
+  "types": "./index.d.ts",
   "typesVersions": {
     "*": {
-      "*": ["index.d.ts"],
-      "atom": ["atom.d.ts"]
+      "*": [
+        "index.d.ts"
+      ],
+      "atom": [
+        "atom.d.ts"
+      ]
     }
   },
   "repository": {
@@ -54,6 +58,7 @@
   "dependencies": {
     "@types/emscripten": "^1.40.1",
     "@types/node": "*",
+    "semver": "^5.7.2",
     "web-tree-sitter": "^0.25.3"
   },
   "peerDependencies": {

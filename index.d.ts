@@ -21,6 +21,7 @@ export * from "./dependencies/event-kit";
 export * from "./dependencies/first-mate";
 export * from "./dependencies/pathwatcher";
 export * from "./dependencies/text-buffer";
+export { ServiceHub } from "./dependencies/service-hub";
 export * from "./src/atom-environment";
 export * from "./src/buffered-node-process";
 export * from "./src/buffered-process";
