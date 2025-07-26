@@ -42,7 +42,7 @@ type MatchResult = {
   matchIndexes?: number[]
 }
 
-class Matcher {
+interface Matcher {
   numCpus: number;
   match(query: string, options: MatcherOptions): MatchResult;
   setCandidates(candidates: string[]): void;
@@ -98,4 +98,4 @@ export interface UI {
    * {@link Matcher#match}.
    */
   fuzzyMatcher: FuzzyMatcher
-};
+}
