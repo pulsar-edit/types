@@ -40,12 +40,8 @@
   "types": "./index.d.ts",
   "typesVersions": {
     "*": {
-      "*": [
-        "index.d.ts"
-      ],
-      "atom": [
-        "atom.d.ts"
-      ]
+      "*": ["index.d.ts"],
+      "atom": ["atom.d.ts"]
     }
   },
   "exports": {
