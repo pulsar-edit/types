@@ -42,17 +42,11 @@
     "*": {
       "*": [
         "index.d.ts"
-      ],
-      "atom": [
-        "atom.d.ts"
       ]
     }
   },
   "exports": {
-    ".": {
-      "types": "index.d.ts"
-    },
-    "./*": "./*"
+    "./*": { "types": "./*" }
   },
   "repository": {
     "type": "git",
