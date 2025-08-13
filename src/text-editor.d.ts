@@ -47,6 +47,14 @@ export class TextEditor {
   /** Get the custom HTML element for the editor. */
   getElement(): TextEditorElement;
 
+  /**
+   * Private: update various properties on the editor instance after creation.
+   *
+   * Returns a promise that resolves when the view layer is updated as a result
+   * of these property changes.
+   */
+  update(params: object): Promise<void>;
+
   // Event Subscription
   /** Calls your callback when the buffer's title has changed. */
   onDidChangeTitle(callback: (title: string) => void): Disposable;
