@@ -29,6 +29,7 @@ import {
   SelectionChangedEvent,
   TextBuffer,
   TextEditOptions,
+  TextEditorElement,
   TextInsertionOptions,
 } from "../index";
 import { CommentDelimiterSpec } from "./wasm-tree-sitter-grammar";
@@ -42,6 +43,9 @@ export class TextEditor {
 
   // NOTE: Undocumented within the public API. Don't go down the rabbit hole.
   constructor(options?: object);
+
+  /** Get the custom HTML element for the editor. */
+  getElement(): TextEditorElement;
 
   // Event Subscription
   /** Calls your callback when the buffer's title has changed. */
