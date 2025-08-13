@@ -1,4 +1,5 @@
 import {
+  Branding,
   Clipboard,
   CommandRegistry,
   Config,
@@ -29,6 +30,9 @@ import {
 */
 export interface AtomEnvironment {
   // Properties
+  /** Branding information. */
+  readonly branding: Branding;
+
   /** A CommandRegistry instance. */
   readonly commands: CommandRegistry;
 

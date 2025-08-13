@@ -22,6 +22,7 @@ export * from "./dependencies/pathwatcher";
 export * from "./dependencies/text-buffer";
 export { ServiceHub } from "./dependencies/service-hub";
 export * from "./src/atom-environment";
+export * from './src/branding';
 export * from "./src/buffered-node-process";
 export * from "./src/buffered-process";
 export * from "./src/clipboard";
