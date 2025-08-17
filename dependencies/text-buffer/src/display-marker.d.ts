@@ -15,6 +15,8 @@ import {
  * in the buffer over time.
  */
 export interface DisplayMarker {
+  id: string;
+
   // Construction and Destruction
   /**
    * Destroys the marker, causing it to emit the 'destroyed' event. Once

@@ -2,6 +2,9 @@ import { Decoration, DecorationOptions, DisplayMarker, Disposable } from "../ind
 
 /** Represents a gutter within a TextEditor. */
 export interface Gutter {
+  /** Undocumented: The name of the gutter. */
+  name?: string;
+
   // Gutter Destruction
   /** Destroys the gutter. */
   destroy(): void;

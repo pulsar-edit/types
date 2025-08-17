@@ -1375,8 +1375,11 @@ export class TextEditor {
    */
   getNonWordCharacters(pos: PointCompatible): string;
 
-  /** Undocumented: Destroys the editor. */
+  /** Undocumented: Destroy the editor. */
   destroy(): void;
+
+  /** Undocumented: Return whether the editor is destroyed. */
+  isDestroyed(): boolean;
 
   /**
    * Given a point in the buffer, retrieves the correct comment delimiters for
