@@ -9,6 +9,7 @@ import {
   TextEditor,
   TextEditorObservedEvent,
   ViewModel,
+  ViewRegistry,
   WorkspaceCenter,
 } from "../index";
 
@@ -167,8 +168,36 @@ export interface Workspace {
    */
   reopenItem(): Promise<object | undefined>;
 
-  /** Register an opener for a URI. */
-  addOpener(opener: (uri: string, options?: WorkspaceOpenOptions) => ViewModel | undefined): Disposable;
+  /**
+   * Register an opener for a URI.
+   *
+   * When a URI is opened via {@link open}, Pulsar loops through its registered
+   * opener functions until one returns a value for the given URI.
+   *
+   * Openers are expected to return an object that inherits from
+   * {@link HTMLElement} or a model which has an associated view in the
+   * {@link ViewRegistry}.
+   *
+   * If no opener responds to a given URI, a {@link TextEditor} will be
+   * opened.
+   *
+   * Note that the opener will be called if and only if the URI is not
+   * already open in the current pane. The `searchAllPanes` option expands
+   * the search from the current pane to all panes.
+   *
+   * If you which to open a view of a different type for a file that is already
+   * open, consider changing the protocol of the URI. For instance: if you
+   * wish to preview a rendered version of a file `/foo/bar/baz.quux` which
+   * is already open in a {@link TextEditor}, you could signal this by calling
+   * {@link open} with a URI like `quux-preview://foo/bar/baz.quux`. Then your
+   * opener can check the protocol for `quux-preview` and handle only those
+   * URIs that match.
+   *
+   * To defer your package's activation until a specific URI is opened, add a
+   * `workspaceOpeners` field to your `package.json` containing an array of URI
+   * strings.
+   */
+  addOpener(opener: (uri: string, options?: WorkspaceOpenOptions) => AbstractPaneItem | undefined): Disposable;
 
   /** Create a new text editor. */
   buildTextEditor(params: object): TextEditor;
