@@ -87,9 +87,13 @@ export interface FindMarkerOptions {
 
   /** Only include markers that contain the given Point, inclusive. */
   containsPoint?: PointCompatible | undefined;
+  containsPosition?: PointCompatible | undefined;
 
-  /** Only include markers that contain the given Range, inclusive. */
+  /** Only include markers that contain the given {@link Range}, inclusive. */
   containsRange?: RangeCompatible | undefined;
+
+  /** Only include markers that intersect the given {@link Range}. */
+  intersectsRange?: RangeCompatible | undefined;
 
   /** Only include markers that start at the given row number. */
   startRow?: number | undefined;
@@ -99,4 +103,15 @@ export interface FindMarkerOptions {
 
   /** Only include markers that intersect the given row number. */
   intersectsRow?: number | undefined;
+
+  /**
+   * Only include markers that intersect the given range of rows (given a
+   * two-item tuple describing the starting and ending rows).
+   */
+  intersectsRowRange?: [number, number] | undefined;
+
+  /**
+   * Only include markers that are completely contained by the specified range.
+   */
+  containedInRange?: RangeCompatible | undefined;
 }
