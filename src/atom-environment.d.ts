@@ -271,7 +271,7 @@ export interface AtomEnvironment {
   confirm(options: {
     message: string;
     detailedMessage?: string | undefined;
-    buttons?: {
+    buttons?: readonly string[] | {
       [key: string]: () => void;
     } | undefined;
   }): number;
