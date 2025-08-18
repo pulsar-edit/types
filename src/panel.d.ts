@@ -1,9 +1,9 @@
 import { Disposable, Workspace } from "../index";
 
 /**
- *  A container representing a panel on the edges of the editor window. You
- *  should not create a Panel directly; instead use
- *  {@link Workspace#addTopPanel} and friends to add panels.
+ * A container representing a panel on the edges of the editor window. You
+ * should not create a Panel directly; instead use
+ * {@link Workspace#addTopPanel} and friends to add panels.
  */
 export interface Panel<T = object> {
   /** Whether or not the Panel is visible. */
