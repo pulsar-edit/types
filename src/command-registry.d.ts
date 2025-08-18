@@ -26,21 +26,28 @@ export interface CommandRegistry {
   ): Disposable;
   /** Register a single command. */
   add<T extends Node>(target: T, commandName: string, listener: CommandRegistryListener<T>): Disposable;
+  add<T extends string>(target: T, commandName: string, listener: CommandRegistryListener<T>): Disposable;
 
   /** Register multiple commands. */
   add<T extends keyof CommandRegistryTargetMap>(
     target: T,
     commands: {
       [key: string]: CommandRegistryListener<CommandRegistryTargetMap[T]>;
-    },
+    }
   ): CompositeDisposable;
   /** Register multiple commands. */
   add<T extends Node>(
     target: T,
     commands: {
       [key: string]: CommandRegistryListener<T>;
-    },
+    }
   ): CompositeDisposable;
+  add<T extends string>(
+    target: T,
+    commands: {
+      [key: string]: CommandRegistryListener<T>;
+    }
+  ) : CompositeDisposable;
 
   /** Find all registered commands matching a query. */
   findCommands(params: {
