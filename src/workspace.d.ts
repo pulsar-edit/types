@@ -13,6 +13,12 @@ import {
   WorkspaceCenter,
 } from "../index";
 
+export type AddPanelOptions<T> = {
+  item: T;
+  visible?: boolean | undefined;
+  priority?: number | undefined
+};
+
 /** Represents the state of the user interface for the entire window. */
 export interface Workspace {
   // Event Subscription
@@ -263,38 +269,38 @@ export interface Workspace {
   /** Get an Array of all the panel items at the bottom of the editor window. */
   getBottomPanels(): Panel[];
 
-  /** Adds a panel item to the bottom of the editor window. */
-  addBottomPanel<T>(options: { item: T; visible?: boolean | undefined; priority?: number | undefined }): Panel<T>;
+  /** Add a panel item to the bottom of the editor window. */
+  addBottomPanel<T>(options: AddPanelOptions<T>): Panel<T>;
 
   /** Get an Array of all the panel items to the left of the editor window. */
   getLeftPanels(): Panel[];
 
-  /** Adds a panel item to the left of the editor window. */
-  addLeftPanel<T>(options: { item: T; visible?: boolean | undefined; priority?: number | undefined }): Panel<T>;
+  /** Add a panel item to the left of the editor window. */
+  addLeftPanel<T>(options: AddPanelOptions<T>): Panel<T>;
 
   /** Get an Array of all the panel items to the right of the editor window. */
   getRightPanels(): Panel[];
 
   /** Adds a panel item to the right of the editor window. */
-  addRightPanel<T>(options: { item: T; visible?: boolean | undefined; priority?: number | undefined }): Panel<T>;
+  addRightPanel<T>(options: AddPanelOptions<T>): Panel<T>;
 
   /** Get an Array of all the panel items at the top of the editor window. */
   getTopPanels(): Panel[];
 
   /** Adds a panel item to the top of the editor window above the tabs. */
-  addTopPanel<T>(options: { item: T; visible?: boolean | undefined; priority?: number | undefined }): Panel<T>;
+  addTopPanel<T>(options: AddPanelOptions<T>): Panel<T>;
 
   /** Get an Array of all the panel items in the header. */
   getHeaderPanels(): Panel[];
 
   /** Adds a panel item to the header. */
-  addHeaderPanel<T>(options: { item: T; visible?: boolean | undefined; priority?: number | undefined }): Panel<T>;
+  addHeaderPanel<T>(options: AddPanelOptions<T>): Panel<T>;
 
   /** Get an Array of all the panel items in the footer. */
   getFooterPanels(): Panel[];
 
   /** Adds a panel item to the footer. */
-  addFooterPanel<T>(options: { item: T; visible?: boolean | undefined; priority?: number | undefined }): Panel<T>;
+  addFooterPanel<T>(options: AddPanelOptions<T>): Panel<T>;
 
   /** Get an Array of all the modal panel items. */
   getModalPanels(): Panel[];
