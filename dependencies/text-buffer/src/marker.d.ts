@@ -125,6 +125,18 @@ export interface Marker {
    *  Returns `1` if this marker follows the argument.
    */
   compare(other: Marker): number;
+
+  /**
+   * Merge an object containing new properties into the marker's existing
+   * properties. Use this to set custom data on your markers.
+   */
+  setProperties(properties: Record<string, unknown>);
+
+  /**
+   * Retrieve an object of key/value pairs that you set earlier via
+   * {@link setProperties}.
+   */
+  getProperties(): Record<string, unknown>;
 }
 
 export interface CopyMarkerOptions {
