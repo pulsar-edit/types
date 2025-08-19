@@ -76,6 +76,15 @@ type PaneItemSaveDialogOptions = {
   properties?: PaneItemSaveDialogProperty[]
 };
 
+/**
+ * An interface implemented by “view model”–style pane items as opposed to bare
+ * DOM nodes.
+ *
+ * Pane items observe a very loose interface in which nearly all methods are
+ * optional, but it is very useful to implement all the methods that are
+ * appropriate for your view. Each one grants a certain automatic behavior or
+ * privilege.
+ */
 interface AbstractPaneItem extends ViewModel {
   // Required methods
   /**
@@ -340,7 +349,29 @@ interface AbstractPaneItem extends ViewModel {
    * `isModified` within your `shouldPromptToSave` implementation if
    * appropriate.
    */
-  shouldPromptToSave?(): boolean
+  shouldPromptToSave?(): boolean;
+
+
+  /**
+   * Register a callback to be notified when a {@link TextEditor} embedded
+   * within this pane item is created or changed.
+   *
+   * This method is used by the `find-and-replace` package. Finding text within
+   * the active pane item typically only works when that item is a
+   * {@link TextEditor}… but if your view embeds its own `TextEditor`,
+   * implementing this method allows “Find in Current Buffer” to work correctly
+   * even on your custom pane item.
+   *
+   * Matches will be highlighted and shortcuts like “Find Next” and “Find
+   * Previous” will move to the correct positions, even if your editor is
+   * read-only.
+   *
+   * You must also, of course, do the work of invoking these callbacks when you
+   * attach or reattatch an editor to your view.
+   */
+  observeEmbeddedTextEditor?(
+    callback: (editor: TextEditor) => unknown
+  ): Disposable;
 }
 
 /** A container for presenting content in the center of the workspace. */
