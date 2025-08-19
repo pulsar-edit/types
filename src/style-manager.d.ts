@@ -25,6 +25,41 @@ export interface StyleManager {
   // Paths
   /** Get the path of the user style sheet in ~/.atom. */
   getUserStyleSheetPath(): string;
+
+  /**
+   * Add a stylesheet to the workspace.
+   *
+   * The vast majority of users won't have to do this directly.
+   */
+  addStyleSheet(
+    /** The raw CSS to add. */
+    source: string,
+    params: {
+      /**
+       * The path on disk of the original source file from which this CSS was
+       * generated. This acts as a unique identifier for the stylesheet; if an
+       * existing `style` tag exists with the same `sourcePath`, its contents
+       * are replaced instead of a new `style` element being created.
+       */
+      sourcePath?: string
+      context?: string
+      /**
+       * The sheet's priority. The higher the number, the later the placement
+       * in the list of `style` elements.
+       */
+      priority?: number
+      /**
+       * Whether to transform deprecated shadow DOM selectors for greater
+       * compatibility.
+       */
+      skipDeprecatedSelectorsTransformation?: boolean
+      /**
+       * Whether to transform deprecated math usages from Less.js for greater
+       * compatibility.
+       */
+      skipDeprecatedMathUsageTransformation?: boolean
+    }
+  ): Disposable;
 }
 
 export interface StyleElementObservedEvent extends HTMLStyleElement {
