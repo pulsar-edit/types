@@ -1,10 +1,8 @@
 import { Disposable, ViewModel, Workspace } from "../index";
-/**
- * Anything that can be rendered as a member of a {@link Pane}.
- *
- *
- */
+
+/** Anything that can be rendered as a member of a {@link Pane}. */
 export type PaneItem = AbstractPaneItem | HTMLElement;
+
 type PaneItemLocation = 'left' | 'right' | 'bottom' | 'center';
 type PaneItemSerializer = { deserializer: string } & Record<string, unknown>;
 type PaneItemFileFilter = { name: string, extensions: string[] };
@@ -513,17 +511,36 @@ export interface Pane {
   isDestroyed(): boolean;
 
   // Splitting
-  /** Create a new pane to the left of this pane. */
+  /** Creat a new pane to the left of this pane. */
   splitLeft(params?: { items?: PaneItem[] | undefined; copyActiveItem?: boolean | undefined }): Pane;
 
-  /** Create a new pane to the right of this pane. */
+  /** Creat a new pane to the right of this pane. */
   splitRight(params?: { items?: PaneItem[] | undefined; copyActiveItem?: boolean | undefined }): Pane;
 
-  /** Creates a new pane above the receiver. */
+  /** Create a new pane above the receiver. */
   splitUp(params?: { items?: PaneItem[] | undefined; copyActiveItem?: boolean | undefined }): Pane;
 
-  /** Creates a new pane below the receiver. */
+  /** Create a new pane below the receiver. */
   splitDown(params?: { items?: PaneItem[] | undefined; copyActiveItem?: boolean | undefined }): Pane;
+
+  // Pending items
+
+  /** Retrieve this pane's pending item, if any. */
+  getPendingItem(): PaneItem | null;
+
+  /**
+   * Set this pane's pending item.
+   *
+   * Will replace any other pending item that may be present in this pane.
+   */
+  setPendingItem(item: PaneItem | null): void;
+
+  /**
+   * Clear this pane's pending item, if any.
+   *
+   * If a pending pane item exists, it will implicitly be closed.
+   */
+  clearPendingItem(): void;
 }
 
 export interface PaneListItemShiftedEvent {
