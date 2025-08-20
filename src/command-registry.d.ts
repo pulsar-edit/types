@@ -6,12 +6,12 @@ export interface CommandRegistryTargetMap extends HTMLElementTagNameMap {
 
 export type CommandRegistryListener<TargetType extends EventTarget> =
   | {
-    didDispatch(event: CommandEvent<TargetType>): void | Promise<void>;
+    didDispatch(event: CommandEvent<TargetType>): unknown | Promise<void>;
     displayName?: string | undefined;
     description?: string | undefined;
     hiddenInCommandPalette?: boolean | undefined;
   }
-  | ((event: CommandEvent<TargetType>) => void | Promise<void>);
+  | ((event: CommandEvent<TargetType>) => unknown | Promise<unknown>);
 
 /**
  * Associates listener functions with commands in a context-sensitive way using
