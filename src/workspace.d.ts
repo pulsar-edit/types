@@ -355,6 +355,9 @@ export interface WorkspaceOpenOptions {
    */
   initialColumn?: number | undefined;
 
+  /** A specific {@link Pane} in which the item should be opened. */
+  pane?: Pane;
+
   /**
    * Either `'left'`, `'right'`, `'up'` or `'down'`.
    *
