@@ -77,8 +77,14 @@ export interface Project {
   /** Remove a path from the project's list of root paths. */
   removePath(projectPath: string): void;
 
-  /** Get an Array of Directorys associated with this project. */
+  /** Get an Array of {@link Directory}s associated with this project. */
   getDirectories(): Directory[];
+
+  /**
+   * Undocumented: Get the {@link Directory} associated with a path within this
+   * project.
+   */
+  getDirectoryForProjectPath(projectPath: string): Directory;
 
   /** Get the relative path from the project directory to the given path. */
   relativize(fullPath: string): string;
@@ -94,6 +100,7 @@ export interface Project {
    * project's directory.
    */
   contains(pathToCheck: string): boolean;
+
 }
 
 export interface ProjectSpecification {
