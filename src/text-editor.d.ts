@@ -207,14 +207,17 @@ export class TextEditor {
    */
   getLongTitle(): string;
 
-  /** Returns the string path of this editor's text buffer. */
+  /** Return the string path of this editor's text buffer. */
   getPath(): string | undefined;
 
-  /** Returns boolean true if this editor has been modified. */
+  /** Return boolean true if this editor has been modified. */
   isModified(): boolean;
 
-  /** Returns boolean true if this editor has no content. */
+  /** Return boolean true if this editor has no content. */
   isEmpty(): boolean;
+
+  /** Return true if this editor has not yet been destroyed. */
+  isAlive(): boolean;
 
   /** Returns the string character set encoding of this editor's text buffer. */
   getEncoding(): string;
@@ -1186,8 +1189,18 @@ export class TextEditor {
   autoIndentSelectedRows(options?: ReadonlyEditOptions): void;
 
   // Grammars
-  /** Get the current Grammar of this editor. */
+  /** Get the current {@link Grammar} of this editor. */
   getGrammar(): Grammar;
+
+  /**
+   * Set the current {@link Grammar} of this editor.
+   *
+   * Assigning a grammar will cause the editor to re-tokenize based on the new
+   * grammar.
+   *
+   * @deprecated Assign a language mode from {@link TextBuffer}.
+   */
+  setGrammar(grammar: Grammar): void;
 
   // Managing Syntax Scopes
   /**
