@@ -39,6 +39,15 @@ export class GitRepository {
   /** Invoke the given callback when a multiple files' statuses have changed. */
   onDidChangeStatuses(callback: () => void): Disposable;
 
+  /**
+   * Refreshes the current git status in an outside process and asynchronously
+   * updates the relevant properties.
+   *
+   * If this results in a status change, will fire any callbacks registered via
+   * {@link onDidChangeStatuses}.
+   */
+  refreshStatus(): Promise<void>;
+
   // Repository Details
   /** A string indicating the type of version control system used by this repository. */
   getType(): "git";
