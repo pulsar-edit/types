@@ -208,6 +208,12 @@ export interface Workspace {
   /** Create a new text editor. */
   buildTextEditor(params: object): TextEditor;
 
+  /** Return whether the workspace is destroyed. */
+  isDestroyed(): boolean;
+
+  // (No need to document `Workspace#destroy`; it should not be called
+  // explicitly under any circumstances.)
+
   // Pane Items
   /** Get all pane items in the workspace. */
   getPaneItems(): object[];
