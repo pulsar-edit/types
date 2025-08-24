@@ -78,14 +78,15 @@ export interface GutterOptions {
    * element within this type: 'line-number' Gutter. If unspecified, the default
    * behavior is to select the clicked buffer row.
    */
-  onMouseDown?: ((lineData: LineData) => void) | undefined;
+  onMouseDown?: ((lineData: LineDataEvent) => void) | undefined;
 
   /**
    * Function to be called when a mousemove event occurs on a line-number
    * element within within this type: 'line-number' Gutter.
    */
-  onMouseMove?: ((lineData: LineData) => void) | undefined;
+  onMouseMove?: ((lineData: LineDataEvent) => void) | undefined;
 }
+
 
 export interface LineData {
   /** Number indicating the zero-indexed buffer index of a line. */
@@ -93,6 +94,15 @@ export interface LineData {
 
   /** Number indicating the zero-indexed screen index. */
   screenRow: number;
+}
+
+/**
+ * The event delivered to all {@link GutterOptions['onMouseDown']} and
+ * {@link GutterOptions['onMouseMove']} callbacks. Contains line data as well
+ * as a reference to the underlying mouse event.
+ */
+export interface LineDataEvent extends LineData {
+  domEvent: MouseEvent;
 }
 
 /** Object containing information about each line to label. */
