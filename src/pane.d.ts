@@ -201,7 +201,7 @@ interface AbstractPaneItem extends ViewModel {
    * If your pane item’s icon will not change after creation, you do not need
    * to implement this method.
    */
-  onDidChangeIcon(callback: (newIcon: string) => unknown): Disposable;
+  onDidChangeIcon?(callback: (newIcon: string) => unknown): Disposable;
 
   /**
    * Tell the workspace where your item should be opened in absence of a user
@@ -218,7 +218,7 @@ interface AbstractPaneItem extends ViewModel {
    * containing one or more {@link PaneItemLocation}s; any valid values omitted
    * from that array will not be allowed to contain this pane item.
    */
-  getAllowedLocations(): PaneItemLocation[];
+  getAllowedLocations?(): PaneItemLocation[];
 
   /**
    * Tell the workspace whether or not this item may be closed by the user by
@@ -234,7 +234,7 @@ interface AbstractPaneItem extends ViewModel {
    * still be prepared to handle your dock items being destroyed by the user
    * even if you implement this method.
    */
-  isPermanentDockItem(): boolean
+  isPermanentDockItem?(): boolean
 
   /**
    * Save the item.
