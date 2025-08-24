@@ -19,6 +19,15 @@ export type AddPanelOptions<T> = {
   priority?: number | undefined
 };
 
+export type TextEditorAddedEvent = {
+  /** The {@link TextEditor} that was added. */
+  textEditor: TextEditor;
+  /** The {@link Pane} containing the added text editor. */
+  pane: Pane;
+  /** The index of the added text editor in its pane. */
+  index: number;
+}
+
 /** Represents the state of the user interface for the entire window. */
 export interface Workspace {
   // Event Subscription
@@ -49,7 +58,7 @@ export interface Workspace {
   /**
    * Invoke the given callback when a text editor is added to the workspace.
    */
-  onDidAddTextEditor(callback: (editor: TextEditor) => void): Disposable;
+  onDidAddTextEditor(callback: (event: TextEditorAddedEvent) => void): Disposable;
 
   /**
    * Invoke the given callback with the current active pane item and with all
