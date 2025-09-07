@@ -115,7 +115,7 @@ You could also fix this via your `tsconfig.json`…
 …but, in doing so, you opt out of the automatic visibility of `@types/` packages, thus obligating you to reference them all manually. See the `tsconfig.json` documentation for [`types`](https://www.typescriptlang.org/tsconfig/#types) and [`typeRoots`](https://www.typescriptlang.org/tsconfig/#typeRoots) for more information.
 
 
-#### Ancillary types
+##### Ancillary types
 
 This `tsconfig.json`-only approach doesn’t give you the ancillary types from various packages…
 

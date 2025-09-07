@@ -5,7 +5,8 @@ import {
   HandleableErrorEvent,
   HistoryTransactionOptions,
   HistoryTraversalOptions,
-  TextEditOptions,
+  LanguageMode,
+  TextEditOptions
 } from "../../../index";
 import {
   FindMarkerOptions,
@@ -27,8 +28,8 @@ export * from "./point";
 export * from "./range";
 
 /**
- *  A mutable text container with undo/redo support and the ability to
- *  annotate logical regions in the text.
+ * A mutable text container with undo/redo support and the ability to annotate
+ * logical regions in the text.
  */
 export class TextBuffer {
   /** The unique identifier for this buffer. */
@@ -69,7 +70,7 @@ export class TextBuffer {
     shouldDestroyOnFileDelete?(): boolean;
   });
 
-  /** Returns a plain javascript object representation of the TextBuffer. */
+  /** Returns a plain JavaScript object representation of the TextBuffer. */
   serialize(options?: { markerLayers?: boolean | undefined; history?: boolean | undefined }): object;
 
   /** Returns the unique identifier for this buffer. */
@@ -77,82 +78,95 @@ export class TextBuffer {
 
   // Event Subscription
   /**
-   * Invoke the given callback synchronously before the content of the buffer
+   * Invokes the given callback synchronously before the content of the buffer
    * changes.
    */
   onWillChange(callback: (event: BufferChangingEvent) => void): Disposable;
 
   /**
-   * Invoke the given callback synchronously when the content of the buffer
-   * changes. You should probably not be using this in packages.
+   * Invokes the given callback synchronously when the content of the buffer
+   * changes. Fires after every single change, even within a transaction.
+   *
+   * Do not use this in your package unless you absolutely must — and, if so,
+   * try very hard to minimize the work done within your callback. It is much
+   * better to subscribe to {@link onDidChangeText} (which operates at the
+   * transaction level) or, better yet, {@link onDidStopChanging} (which waits
+   * until the user has stopped typing for a small amount of time).
    */
   onDidChange(callback: (event: BufferChangedEvent) => void): Disposable;
 
   /**
-   * Invoke the given callback synchronously when a transaction finishes with a
+   * Invokes the given callback synchronously when a transaction finishes with a
    * list of all the changes in the transaction.
    */
   onDidChangeText(callback: (event: BufferStoppedChangingEvent) => void): Disposable;
 
   /**
-   * Invoke the given callback asynchronously following one or more changes
+   * Invokes the given callback asynchronously following one or more changes
    * after {@link getStoppedChangingDelay} milliseconds elapse without an
    * additional change.
    */
   onDidStopChanging(callback: (event: BufferStoppedChangingEvent) => void): Disposable;
 
   /**
-   * Invoke the given callback when the in-memory contents of the buffer become
-   * in conflict with the contents of the file on disk.
+   * Invokes the given callback when the in-memory contents of the buffer
+   * become in conflict with the contents of the file on disk.
    */
   onDidConflict(callback: () => void): Disposable;
 
-  /** Invoke the given callback if the value of ::isModified changes. */
+  /** Invokes the given callback if the value of {@link isModified} changes. */
   onDidChangeModified(callback: (modified: boolean) => void): Disposable;
 
   /**
-   * Invoke the given callback when all marker {@link onDidChange} observers
+   * Invokes the given callback when all marker {@link onDidChange} observers
    * have been notified following a change to the buffer.
    */
   onDidUpdateMarkers(callback: () => void): Disposable;
 
+  /**
+   * Invokes the given callback when a marker is created.
+   */
   onDidCreateMarker(callback: (marker: Marker) => void): Disposable;
 
-  /** Invoke the given callback when the value of ::getPath changes. */
+  /** Invokes the given callback when the value of {@link getPath} changes. */
   onDidChangePath(callback: (path: string) => void): Disposable;
 
-  /** Invoke the given callback when the value of ::getEncoding changes. */
+  /**
+   * Invokes the given callback when the value of {@link getEncoding} changes.
+   */
   onDidChangeEncoding(callback: (encoding: string) => void): Disposable;
 
   /**
-   * Invoke the given callback before the buffer is saved to disk. If the given
+   * Invokes the given callback before the buffer is saved to disk. If the given
    * callback returns a promise, then the buffer will not be saved until the
    * promise resolves.
    */
   onWillSave(callback: () => Promise<void> | void): Disposable;
 
-  /** Invoke the given callback after the buffer is saved to disk. */
+  /** Invokes the given callback after the buffer is saved to disk. */
   onDidSave(callback: (event: FileSavedEvent) => void): Disposable;
 
-  /** Invoke the given callback after the file backing the buffer is deleted. */
+  /**
+   * Invokes the given callback after the file backing the buffer is deleted.
+   */
   onDidDelete(callback: () => void): Disposable;
 
   /**
-   * Invoke the given callback before the buffer is reloaded from the contents
+   * Invokes the given callback before the buffer is reloaded from the contents
    * of its file on disk.
    */
   onWillReload(callback: () => void): Disposable;
 
   /**
-   * Invoke the given callback after the buffer is reloaded from the contents
+   * Invokes the given callback after the buffer is reloaded from the contents
    * of its file on disk.
    */
   onDidReload(callback: () => void): Disposable;
 
-  /** Invoke the given callback when the buffer is destroyed. */
+  /** Invokes the given callback when the buffer is destroyed. */
   onDidDestroy(callback: () => void): Disposable;
 
-  /** Invoke the given callback when there is an error in watching the file. */
+  /** Invokes the given callback when there is an error in watching the file. */
   onWillThrowWatchError(callback: (errorObject: HandleableErrorEvent) => void): Disposable;
 
   /**
@@ -162,6 +176,7 @@ export class TextBuffer {
   getStoppedChangingDelay(): number;
 
   // File Details
+
   /**
    * Determine if the in-memory contents of the buffer differ from its contents
    * on disk.
@@ -228,7 +243,7 @@ export class TextBuffer {
   lineEndingForRow(row: number): string | undefined;
 
   /**
-   * Get the length of the line for the given 0-indexed row, without its line
+   * Get the length of the line for the given 0-indexed row _without_ its line
    * ending.
    */
   lineLengthForRow(row: number): number;
@@ -239,14 +254,14 @@ export class TextBuffer {
   /**
    * Given a row, find the first preceding row that's not blank.
    *
-   * Returns a number or null if there's no preceding non-blank row.
+   * Returns a number or `null` if there's no preceding non-blank row.
    */
   previousNonBlankRow(startRow: number): number | null;
 
   /**
    * Given a row, find the next row that's not blank.
    *
-   * Returns a number or null if there's no next non-blank row.
+   * Returns a number or `null` if there's no next non-blank row.
    */
   nextNonBlankRow(startRow: number): number | null;
 
@@ -257,6 +272,7 @@ export class TextBuffer {
   hasAstral(): boolean;
 
   // Mutating Text
+
   /** Replace the entire contents of the buffer with the given text. */
   setText(text: string): Range;
 
@@ -342,13 +358,17 @@ export class TextBuffer {
   /** Get an existing marker by its id from the default marker layer. */
   getMarker(id: number): Marker;
 
-  /** Find markers conforming to the given parameters in the default marker layer. */
+  /**
+   * Find markers conforming to the given parameters in the default marker
+   * layer.
+   */
   findMarkers(params: FindMarkerOptions): Marker[];
 
   /** Get the number of markers in the default marker layer. */
   getMarkerCount(): number;
 
   // History
+
   /**
    * Undo the last operation. If a transaction is in progress, aborts it.
    *
@@ -588,6 +608,21 @@ export class TextBuffer {
 
   /** Identifies if the buffer belongs to multiple editors. */
   hasMultipleEditors(): boolean;
+
+  // Language modes
+
+  /** Returns the current {@link LanguageMode} for the buffer. */
+  getLanguageMode(): LanguageMode;
+
+  /** Sets the buffer's {@link LanguageMode}. */
+  setLanguageMode(languageMode: LanguageMode): void;
+
+  /**
+   * Invokes the given callback when the buffer's {@link LanguageMode} changes.
+   */
+  onDidChangeLanguageMode(
+    callback: (languageMode: LanguageMode) => unknown
+  ): Disposable;
 }
 
 export interface TextBufferFileBackend {
@@ -623,11 +658,13 @@ export interface TextBufferFileBackend {
   onDidRename?(callback: () => void): Disposable;
 }
 
+/** The event associated with {@link TextBuffer#onWillChange}. */
 export interface BufferChangingEvent {
   /** Range of the old text. */
   oldRange: Range;
 }
 
+/** The event associated with {@link TextBuffer#onDidChange}. */
 export interface BufferChangedEvent {
   /**
    * An array of objects summarizing the aggregated changes that occurred
@@ -657,10 +694,15 @@ export interface BufferChangedEvent {
   newText: string;
 }
 
+/** The event associated with {@link TextBuffer#onDidStopChanging}. */
 export interface BufferStoppedChangingEvent {
   changes: TextChange[];
 }
 
+/**
+ * The options that may be passed to {@link TextBuffer.load} and
+ * {@link TextBuffer.loadSync}.
+ */
 export interface BufferLoadOptions {
   /** The file's encoding. */
   encoding?: string | undefined;
@@ -672,6 +714,11 @@ export interface BufferLoadOptions {
   shouldDestroyOnFileDelete?(): boolean;
 }
 
+/**
+ * The result object given during {@link TextBuffer#scan} and
+ * {@link TextBuffer#scanInRange}, as well as the "backwards" versions of those
+ * methods.
+ */
 export interface BufferScanResult {
   buffer: TextBuffer;
   lineText: string;
@@ -683,11 +730,20 @@ export interface BufferScanResult {
   stopped: boolean;
 }
 
+/**
+ * Additional properties that are included in {@link BufferScanResult} if the
+ * contextual options in {@link ScanContextOptions} were specified.
+ */
 export interface ContextualBufferScanResult extends BufferScanResult {
   leadingContextLines: string[];
   trailingContextLines: string[];
 }
 
+/**
+ * Additional options that may be passed to {@link TextBuffer#scan} and
+ * {@link TextBuffer#scanInRange}, as well as the "backwards" versions of those
+ * methods.
+ */
 export interface ScanContextOptions {
   /**
    * The number of lines before the matched line to include in the results

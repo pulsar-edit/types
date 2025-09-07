@@ -41,6 +41,7 @@ export * from "./src/grammar-registry";
 export * from "./src/gutter";
 export * from "./src/history-manager";
 export * from "./src/keymap-extensions";
+export * from "./src/language-mode";
 export * from "./src/layer-decoration";
 export * from "./src/menu-manager";
 export * from "./src/notification";
