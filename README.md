@@ -12,7 +12,7 @@ Also includes some type definitions from notable builtin and community packages:
 
 Migrated from [@types/atom](https://www.npmjs.com/package/@types/atom) and updated to reflect new and changed APIs in Pulsar.
 
-Install these types under `devDependencies` if you’re writing a community package in TypeScript (or even in JavaScript if you want better autocompletion and inline documentation).
+Install these types under `devDependencies` if you’re writing a community package in TypeScript or JavaScript. Pair this package with [`pulsar-ide-typescript`](https://packages.pulsar-edit.dev/packages/pulsar-ide-typescript) for better autocompletion and inline method descriptions.
 
 ## Usage
 
@@ -21,7 +21,7 @@ Install these types under `devDependencies` if you’re writing a community pack
 Install this package as a `devDependency` and tell it to **pretend** to be `@types/atom`:
 
 ```shell
-npm install -D @types/atom@github:pulsar-edit/types
+npm install -D @types/atom@npm:@pulsar-edit/types
 ```
 
 This will
@@ -29,6 +29,12 @@ This will
 * install this package at `./node_modules/@types/atom`, thus giving it all of the built-in privileges of `@types/` packages in the TypeScript environment;
 * make this package’s declarations ambiently available — for instance, the `atom` global;
 * make it so you can import from `atom` — or, for the ancillary types, from `atom/autocomplete-plus`, `atom/linter`, and so on.
+
+If you need to opt into a specific version of `@pulsar-edit/types`, you may add it at the end:
+
+```shell
+npm install -D @types/atom@npm:@pulsar-edit/types@1.130
+```
 
 ### Special cases
 
@@ -41,7 +47,7 @@ If you’re using `npm`, this can be fixed via [the `overrides` section in `pack
 ```json
 {
   "overrides": {
-    "@types/atom": "github:pulsar-edit/types"
+    "@types/atom": "@pulsar-edit/types"
   }
 }
 ```
@@ -144,6 +150,30 @@ Still, if you _really_ wanted to make this example available at `atom/autocomple
   }
 }
 ```
+
+## Versioning
+
+### Minor versions
+
+We will try to update this package at least as often as we update Pulsar, even if there are no API changes from one minor version to another.
+
+If, somehow, this doesn’t happen, it means that the next-lowest version number to exist is the version of `@pulsar-edit/types` that should be used for whichever version of Pulsar you’re targeting. Hence if you’re targeting `1.129.0`, but the latest release of this package is `1.128.0`, then `1.128.0` is the correct version to use.
+
+### Patch versions
+
+Pulsar increments the minor version number with each regular release. If the last release was `1.129.0`, the next regular release will be `1.130.0`. If Pulsar needs to do a bugfix release in between — for instance, if there were an regression in the last regular release — then the patch version number will increment (e.g., `1.129.0` is followed by `1.129.1`).
+
+The version numbers in this repository are designed to harmonize with Pulsar’s version numbers, but **only so far as the minor version**. That’s because this repository may need to update more often than Pulsar itself.
+
+Suppose a version `1.131.1` exists of Pulsar and is the most recent release in the `1.131` range. To target this version of Pulsar, you should install this types package with
+
+```shell
+npm install -D @types/atom@npm:@pulsar-edit/types@1.131
+```
+
+to ensure you’re getting the most recent version of the types that correspond to the `1.131` release. You _should not_ assume that `@pulsar-edit/types` has a `1.131.1` release — or, if it does exist, that it is the “correct” version of this package to install for Pulsar `1.131.1`. The “correct” version to install is the most recent release that starts with `1.131.`.
+
+Pulsar itself will not break API backward-compatibility in a patch release, so patch releases of this package will never be issued in a way that affects backward compatibility. They will always have the effect of describing the current types more accurately.
 
 
 ## Questions
