@@ -1,5 +1,6 @@
 import {
   Disposable,
+  Grammar,
   GrammarRegistry,
   GrammarToken,
   Range,
@@ -151,7 +152,7 @@ type WASMTreeSitterGrammarParams = {
  *  highlighting, indentation, and code folding. Uses Tree-sitter as its parsing
  *  system.
  */
-export class WASMTreeSitterGrammar {
+export interface WASMTreeSitterGrammar extends Grammar {
   /** The name of the grammar. */
   readonly name: string;
 

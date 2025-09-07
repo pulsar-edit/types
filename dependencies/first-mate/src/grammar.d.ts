@@ -1,6 +1,33 @@
 import { Disposable } from "../../../index";
 
-/** Grammar that tokenizes lines of text. */
+/**
+ * A class instance that encapsulates knowledge about language-specific tasks
+ * like syntax highlighting.
+ *
+ * A `Grammar` knows how translate raw text in a given language into
+ * syntax-highlighted text. The exact implementation details of how this is
+ * done may vary.
+ *
+ * The two currently supported types of grammar in Pulsar are `Grammar`
+ * (representing the original type of grammar that uses TextMate-style grammar
+ * definitions to parse code) and `WASMTreeSitterGrammar` (a newer style of
+ * grammar which uses Tree-sitter to parse code).
+ *
+ * A grammar has a human-readable name and an internal identifier that doubles
+ * as its "root" scope name. (For instance: the `name` of the JavaScript grammar
+ * is `"JavaScript"`; its `scopeName` is `"source.js"`.) You may find it useful
+ * to use the former (for text shown to the user) or the latter (for keeping
+ * track of grammar-specific concerns within your package).
+ *
+ * This object, `Grammar`, describes the original TextMate-style grammar
+ * implementation, but also serves as an abstract interface that is fulfilled
+ * by `WASMTreeSitterGrammar`. If you don't know which kind of grammar you are
+ * working with, play it safe and use only what's available on {@link Grammar};
+ * but if your package is designed to use Tree-sitter features, you may treat
+ * a grammar as a `WASMTreeSitterGrammar` once you've done type-narrowing to
+ * tell them apart. (A predicate function for telling them apart need only
+ * look at `someGrammar.constructor.name`.)
+ */
 export interface Grammar {
   /** The name of the Grammar. */
   readonly name: string;

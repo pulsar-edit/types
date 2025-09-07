@@ -25,9 +25,9 @@ import {
 
 
 /**
-*  Atom global for dealing with packages, themes, menus, and the window.
-*  An instance of this class is always available as the atom global.
-*/
+ *  Atom global for dealing with packages, themes, menus, and the window.
+ *  An instance of this class is always available as the atom global.
+ */
 export interface AtomEnvironment {
   // Properties
   /** Branding information. */

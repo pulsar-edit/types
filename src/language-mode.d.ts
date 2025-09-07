@@ -1,5 +1,6 @@
 import {
   Disposable,
+  Grammar,
   Point,
   PointCompatible,
   Range,

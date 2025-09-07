@@ -1,4 +1,5 @@
 import {
+  AbstractPaneItem,
   CancellablePromise,
   Disposable,
   Dock,

@@ -1,4 +1,4 @@
-import { Disposable, ViewModel, Workspace } from "../index";
+import { Disposable, TextEditor, ViewModel, Workspace } from "../index";
 
 /** Anything that can be rendered as a member of a {@link Pane}. */
 export type PaneItem = AbstractPaneItem | HTMLElement;
