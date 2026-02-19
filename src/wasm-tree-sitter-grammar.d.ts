@@ -152,18 +152,18 @@ type WASMTreeSitterGrammarParams = {
  *  highlighting, indentation, and code folding. Uses Tree-sitter as its parsing
  *  system.
  */
-export class WASMTreeSitterGrammar extends Grammar {
+export interface WASMTreeSitterGrammar extends Grammar {
   /** The name of the grammar. */
   readonly name: string;
 
   /** Undocumented: Root scope name of the grammar. */
   readonly scopeName: string;
 
-  constructor(
+  new(
     registry: GrammarRegistry,
     grammarPath: string,
     params: WASMTreeSitterGrammarParams
-  );
+  ): WASMTreeSitterGrammar;
 
   // Callbacks
   onDidUpdate(callback: () => void): Disposable;
