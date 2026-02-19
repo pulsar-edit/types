@@ -129,8 +129,10 @@ export interface Marker {
   /**
    * Merge an object containing new properties into the marker's existing
    * properties. Use this to set custom data on your markers.
+   *
+   * Returns a boolean indicating whether any properties were changed.
    */
-  setProperties(properties: Record<string, unknown>);
+  setProperties(properties: Record<string, unknown>): boolean;
 
   /**
    * Retrieve an object of key/value pairs that you set earlier via

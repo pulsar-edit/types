@@ -101,10 +101,31 @@ export interface Project {
    */
   contains(pathToCheck: string): boolean;
 
+  /**
+   * Layers the contents of a project-specific configuration on top of the
+   * current global configuration.
+   */
+  replace(projectSpecification: ProjectSpecification): void;
+
 }
 
+/**
+ * A serialized representation of the attributes that identify this project.
+ *
+ * Most projects are opened against a single root path and can be described
+ * entirely by that root path. But if customization does take place — addition
+ * of other project roots, configuration overrides — the project now needs a
+ * way to describe and serialize those customizations.
+ *
+ * Eventually, the destination for this information might be a project file.
+ * For now, it's an object that can be passed to {@link Project#replace} and
+ * will be included in the calllback to {@link Project#onDidReplace}.
+ */
 export interface ProjectSpecification {
+  /** A set of project paths. */
   paths: string[];
+  /** The location on disk of the project's configuration file. */
   originPath: string;
+  /** The configuration overrides to be applied to this project. */
   config?: ConfigValues | undefined;
 }

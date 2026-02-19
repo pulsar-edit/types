@@ -30,4 +30,10 @@ export interface Package {
 
   /** If a previous rebuild failed, get the contents of stderr. */
   getBuildFailureOutput(): string | null;
+
+  /** Private: Load the package but do not activate it. */
+  preload(): void;
+
+  /** Private: Activate the package immediately. */
+  activateNow(): void;
 }

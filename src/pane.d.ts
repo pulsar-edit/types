@@ -7,6 +7,10 @@ type PaneItemLocation = 'left' | 'right' | 'bottom' | 'center';
 type PaneItemSerializer = { deserializer: string } & Record<string, unknown>;
 type PaneItemFileFilter = { name: string, extensions: string[] };
 
+interface PaneContainer {
+  getLocation(): PaneItemLocation;
+}
+
 /**
  * Properties to apply to the save dialog:
  *
@@ -141,7 +145,7 @@ interface AbstractPaneItem extends ViewModel {
    *
    * Must return a {@link Disposable}.
    */
-  onDidDestroy?(callback): Disposable;
+  onDidDestroy?(callback: () => unknown): Disposable;
 
   /**
    * Indicate whether this pane has already been destroyed.
@@ -367,7 +371,7 @@ interface AbstractPaneItem extends ViewModel {
    * read-only.
    *
    * You must also, of course, do the work of invoking these callbacks when you
-   * attach or reattatch an editor to your view.
+   * attach or reattach an editor to your view.
    */
   observeEmbeddedTextEditor?(
     callback: (editor: TextEditor) => unknown
@@ -452,6 +456,12 @@ export interface Pane {
 
   /** Get the active pane item in this pane. */
   getActiveItem(): PaneItem;
+
+  /** Gets the pane's container. */
+  getContainer(): PaneContainer;
+
+  /** Sets the pane's container. */
+  setContainer(container: PaneContainer): void;
 
   /** Return the item at the given index. */
   itemAtIndex(index: number): PaneItem | undefined;
