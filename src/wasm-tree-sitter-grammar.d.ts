@@ -135,7 +135,7 @@ type TreeSitterParams = {
   languageSegment?: string
 }
 
-type WASMTreeSitterGrammarParams = {
+export type WASMTreeSitterGrammarParams = {
   name: string;
   scopeName: string;
   contentRegex?: string | string[]
