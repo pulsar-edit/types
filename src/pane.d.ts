@@ -89,7 +89,7 @@ type PaneItemSaveDialogOptions = {
  * appropriate for your view. Each one grants a certain automatic behavior or
  * privilege.
  */
-interface AbstractPaneItem extends ViewModel {
+export interface AbstractPaneItem extends ViewModel {
   // Required methods
   /**
    * Return the title of the pane item.
