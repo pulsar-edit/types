@@ -41,13 +41,6 @@ type CreateGrammarParams = {
   params: TextMateGrammarParams
 }
 
-type LanguageScopeFunction = (
-  grammar: WASMTreeSitterGrammar,
-  buffer: TextBuffer,
-  range: Range
-) => string | null
-
-
 /** Registry containing one or more grammars. */
 export interface GrammarRegistry {
   // Event Subscription
