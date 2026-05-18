@@ -294,6 +294,28 @@ export interface AbstractPaneItem extends ViewModel {
   isModified?(): boolean
 
   /**
+   * Return whether the item is in a “conflicted” state.
+   *
+   * If this method is implemented and returns `true`, a user may be prompted
+   * for confirmation when they request to save this pane item — since saving
+   * may overwrite changes made to the file on disk.
+   *
+   * The user controls whether they want to see these confirmation dialogs via
+   * the `core.promptOnConflict` setting.
+   *
+   * The exact semantics of “conflcited” vary based on what the pane item is.
+   * For an editor, a conflicted state happens when the user makes
+   * modifications to a file, does not save them immediately, then has the
+   * file’s contents on disk change because of modifications from another
+   * program. If the file were not in a modified state, we would automatically
+   * update the editor’s contents to match the contents on disk, but we cannot
+   * do that without losing the user’s changes.
+   *
+   * @since 1.132.0
+   */
+  isInConflict?(): boolean
+
+  /**
    * Register a callback to be notified when the item’s “modified” status
    * changes. Must return a {@link Disposable}.
    *
