@@ -580,7 +580,7 @@ export class TextBuffer {
   saveAs(filePath: string): Promise<void>;
 
   /** Reload the buffer's contents from disk. */
-  reload(): void;
+  reload(): Promise<void>;
 
   /** Destroy the buffer, even if there are retainers for it. */
   destroy(): void;
