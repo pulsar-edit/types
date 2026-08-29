@@ -90,17 +90,19 @@ type PaneSplitParams = {
  * DOM nodes.
  *
  * Pane items observe a very loose interface in which nearly all methods are
- * optional, but it is very useful to implement all the methods that are
- * appropriate for your view. Each one grants a certain automatic behavior or
- * privilege.
+ * optional — but it is very useful to implement all the methods that are
+ * appropriate for your view. Each one implemented grants a certain automatic
+ * behavior or privilege.
  */
 export interface AbstractPaneItem extends ViewModel {
   // Required methods
+
   /**
    * Return the title of the pane item.
    *
-   * Implement this method for your pane item’s title to be reflected in the
-   * tab bar, the window title, and other places.
+   * A title is one of the few items of metadata that a pane item is required
+   * to have. Implementing this method allows your pane item’s title to be
+   * reflected in the tab bar, the window title, and other places.
    */
   getTitle(): string;
 
@@ -113,6 +115,19 @@ export interface AbstractPaneItem extends ViewModel {
   getElement(): HTMLElement;
 
   // Optional methods
+
+  /**
+   * Register a callback to be invoked when your pane item’s title changes.
+   *
+   * If this method exists, the workspace will use it to subscribe to title
+   * updates for your pane item. This method must return a {@link Disposable}.
+   *
+   * If your pane item‘s title won’t change after creation, you do not need to
+   * implement this method. Otherwise, you must implement this method for
+   * changes in your title to be reflected in the tab bar and the window title
+   * bar.
+   */
+  onDidChangeTitle?(callback: (newTitle: string) => unknown): Disposable;
 
   /**
    * Return the URI associated with the item.
@@ -136,6 +151,13 @@ export interface AbstractPaneItem extends ViewModel {
   getURI?(): string;
 
   /**
+   * Return the URI associated with this item.
+   *
+   * @deprecated Prefer {@link getURI}.
+   */
+  getUri?(): string;
+
+  /**
    * Destroy the pane item.
    *
    * If this method exists, it will be called by the workspace when the item is
@@ -144,11 +166,12 @@ export interface AbstractPaneItem extends ViewModel {
   destroy?(): unknown;
 
   /**
-   * Register a callback to be invoked when your pane item is destroyed.
+   * Register a callback to be invoked when your pane item is destroyed. Must
+   * return a {@link Disposable}.
    *
-   * If you implement `destroy`, you should also implement this method.
-   *
-   * Must return a {@link Disposable}.
+   * If you implement {@link destroy}, you should also implement this method so
+   * that anything that cares about your pane item’s life cycle can do its own
+   * cleanup when the pane item is destroyed.
    */
   onDidDestroy?(callback: () => unknown): Disposable;
 
@@ -163,24 +186,15 @@ export interface AbstractPaneItem extends ViewModel {
   /**
    * Serialize the state of the item.
    *
+   * This method is invoked on items when serializing the workspace so that
+   * they can be restored to the same location after a relaunch or window
+   * reload.
+   *
    * Must return an object that can be passed to {@link JSON.stringify}. The
    * state should include a field called `deserializer` that names a
-   * deserializer declared in your `package.json`. This method is invoked on
-   * items when serializing the workspace so that they can be restored to the
-   * same location after a relaunch or window reload.
+   * deserializer declared in your `package.json`.
    */
   serialize?(): PaneItemSerializer;
-
-  /**
-   * Register a callback to be invoked when your pane item’s title changes.
-   *
-   * If this method exists, the workspace will use it to subscribe to title
-   * updates for your pane item. This method must return a {@link Disposable}.
-   *
-   * If your pane item‘s title won’t change after creation, you do not need to
-   * implement this method.
-   */
-  onDidChangeTitle?(callback: (newTitle: string) => unknown): Disposable;
 
   /**
    * Return the “long” title of the pane item.
@@ -194,8 +208,8 @@ export interface AbstractPaneItem extends ViewModel {
   /**
    * Return the name of an icon.
    *
-   * If this method is defined and returns a string, the item’s tab element
-   * will include the specified icon.
+   * If this method is defined, returns a string, and points to a valid icon
+   * name, then the item’s tab will include the specified icon.
    *
    * The icon name should be “bare” and should not begin with `icon-`.
    */
@@ -208,7 +222,9 @@ export interface AbstractPaneItem extends ViewModel {
    * must return a {@link Disposable}.
    *
    * If your pane item’s icon will not change after creation, you do not need
-   * to implement this method.
+   * to implement this method. Otherwise, if you implement {@link getIconName},
+   * you should also implement this method so that the new icon will
+   * automatically be shown in the tab bar when you change icons.
    */
   onDidChangeIcon?(callback: (newIcon: string) => unknown): Disposable;
 
@@ -233,10 +249,10 @@ export interface AbstractPaneItem extends ViewModel {
    * Tell the workspace whether or not this item may be closed by the user by
    * clicking an `x` on its tab.
    *
-   * Use of this feature is discouraged unless there’s a very good reason not
-   * to allow users to close your item. Items may be made permanent _only_ when
-   * they are contained in docks; pane items in the workspace center may always
-   * be removed.
+   * Implementing this method and having it return `true` is discouraged unless
+   * there’s a very good reason not to allow users to close your pane item.
+   * Items may be made permanent _only_ when they are contained in docks; pane
+   * items in the workspace center may always be removed.
    *
    * Note that it is still currently possible to close dock items via the
    * “Close Pane” option in the context menu and via Pulsar APIs, so you should
@@ -254,7 +270,9 @@ export interface AbstractPaneItem extends ViewModel {
    * This method is invoked only when your pane item implements the
    * {@link getURI} method; otherwise, {@link saveAs} will be called instead.
    *
-   * This method is allowed to go asynchronous if needed.
+   * This method is allowed to go asynchronous if needed. You should not return
+   * from this method unless and until your pane item is “saved,” however you
+   * choose to define it.
    */
   save?(): void | Promise<void>;
 
@@ -265,7 +283,9 @@ export interface AbstractPaneItem extends ViewModel {
    * `core:save-as` command. The path returned by {@link getPath}, if any, will
    * be used as the initial location for the “save as” dialog.
    *
-   * This method is allowed to go asynchronous if needed.
+   * This method is allowed to go asynchronous if needed. You should not return
+   * from this method unless and until your pane item is “saved,” however you
+   * choose to define it.
    */
   save?(filePath: string): void | Promise<void>;
 
@@ -308,7 +328,7 @@ export interface AbstractPaneItem extends ViewModel {
    * The user controls whether they want to see these confirmation dialogs via
    * the `core.promptOnConflict` setting.
    *
-   * The exact semantics of “conflcited” vary based on what the pane item is.
+   * The exact semantics of “conflicted” vary based on what the pane item is.
    * For an editor, a conflicted state happens when the user makes
    * modifications to a file, does not save them immediately, then has the
    * file’s contents on disk change because of modifications from another
@@ -318,17 +338,32 @@ export interface AbstractPaneItem extends ViewModel {
    *
    * @since 1.132.0
    */
-  isInConflict?(): boolean
+  isInConflict?(): boolean;
 
   /**
-   * Register a callback to be notified when the item’s “modified” status
-   * changes. Must return a {@link Disposable}.
+   * Register a callback to be notified when the item’s “conflicted” status
+   * changes from `false` to `true`. Must return a {@link Disposable}.
    *
-   * If you implement {@link isModified}, you should also implement this
-   * method. When this method exists, the workspace will automatically call it
-   * so it can subscribe to changes in your item’s “modified” status.
+   * If you implement {@link isInConflict}, you should also implement this
+   * method. When this method exists, the workspace will use it to subscribe
+   * to changes in your item’s “conflicted” status.
    */
-  onDidChangeModified?(callback: (newModified: boolean) => unknown): Disposable
+  onDidConflict?(callback: () => unknown): Disposable;
+
+  /**
+   * Register a callback to be notified when the item’s “conflicted” status
+   * switches to `true`. Must return a {@link Disposable}.
+   *
+   * Unlike {@link onDidDelete}, this callback will fire even when “conflicted”
+   * status changes from `true` to `false`.
+   *
+   * If you implement {@link isInConflict}, you should also implement this
+   * method. When this method exists, the workspace will use it to subscribe
+   * to changes in your item’s “conflicted” status.
+   *
+   * @since 1.132.0
+   */
+  onDidChangeConflictedStatus(callback: (newConflicted: boolean) => unknown): Disposable;
 
   /**
    * Create a copy of the current pane item.
@@ -337,7 +372,7 @@ export interface AbstractPaneItem extends ViewModel {
    * a new split. If you define this method, your pane items can be copied in
    * the same manner as editor pane items and others.
    */
-  copy?(): AbstractPaneItem;
+  copy?(): PaneItem;
 
   /**
    * Report the pane’s preferred height.
@@ -363,7 +398,13 @@ export interface AbstractPaneItem extends ViewModel {
    * Register a callback to be notified when this pane item should no longer be
    * considered “pending.” Must return a {@link Disposable}.
    *
-   * If the workspace is configured to use pending pane items, it will
+   * When a “pending” state is present on a pane item, it will be replaced in
+   * its container by the very next item to be opened, whether or not that item
+   * is itself in a “pending” state. It is meant to make it easier to “glimpse”
+   * at files in the project.
+   *
+   * If your pane item can enter a “pending” state, you should implement this
+   * method. If the workspace is configured to use pending pane items, it will
    * use this method to find out when the pane item feels it should lose its
    * pending status and be promoted to a “regular” pane item.
    */
@@ -374,14 +415,15 @@ export interface AbstractPaneItem extends ViewModel {
    * user closes or reloads the window.
    *
    * The logic for whether to prompt to save this item is unconnected to any
-   * other pane item logic. For instance: the workspace will not use the
-   * “modified” status of the item to decide whether to prompt, even when
-   * {@link isModified} is implemented; but you are, of course, free to reuse
-   * `isModified` within your `shouldPromptToSave` implementation if
+   * other pane item logic. There is no default `shouldPromptToSave`; it falls
+   * on the package author to define for a particular pane item.
+   *
+   * Often you will want to make it behave identically to {@link isModified} —
+   * prompting the user to save only when there are uncommitted changes — but
+   * you have the freedom to make this method behave differently if it is
    * appropriate.
    */
   shouldPromptToSave?(): boolean;
-
 
   /**
    * Register a callback to be notified when a {@link TextEditor} embedded
@@ -407,11 +449,26 @@ export interface AbstractPaneItem extends ViewModel {
 
 /** A container for presenting content in the center of the workspace. */
 export interface Pane {
+
   // Event Subscription
-  /** Invoke the given callback when the pane resizes. */
+  /**
+   * Invoke the given callback when the pane resizes.
+   *
+   * The callback will be invoked when the pane's `flexScale` property changes.
+   * Use {@link getFlexScale} to get the current value.
+   *
+   * @param callback A function to be called when the pane is resized. Takes
+   *   one parameter, `flexScale` — a number representing the pane's
+   *   `flex-grow` value (its ability to grow if necessary).
+   */
   onDidChangeFlexScale(callback: (flexScale: number) => void): Disposable;
 
-  /** Invoke the given callback with the current and future values of ::getFlexScale. */
+  /**
+   * Invoke the given callback with the current and future values of
+   * {@link getFlexScale}.
+   *
+   * Parameters are identical to those of {@link onDidChangeFlexScale}.
+   */
   observeFlexScale(callback: (flexScale: number) => void): Disposable;
 
   /** Invoke the given callback when the pane is activated. */
@@ -423,12 +480,15 @@ export interface Pane {
   /** Invoke the given callback when the pane is destroyed. */
   onDidDestroy(callback: () => void): Disposable;
 
-  /** Invoke the given callback when the value of the ::isActive property changes. */
+  /**
+   * Invoke the given callback when the value of the {@link isActive} property
+   * changes.
+   */
   onDidChangeActive(callback: (active: boolean) => void): Disposable;
 
   /**
-   *  Invoke the given callback with the current and future values of the ::isActive
-   *  property.
+   * Invoke the given callback with the current and future values of the
+   * {@link isActive} function.
    */
   observeActive(callback: (active: boolean) => void): Disposable;
 
@@ -447,7 +507,9 @@ export interface Pane {
   /** Invoke the given callback with all current and future items. */
   observeItems(callback: (item: PaneItem) => void): Disposable;
 
-  /** Invoke the given callback when the value of ::getActiveItem changes. */
+  /**
+   * Invoke the given callback when the value of {@link getActiveItem} changes.
+   */
   onDidChangeActiveItem(callback: (activeItem: PaneItem) => void): Disposable;
 
   /**
@@ -465,24 +527,70 @@ export interface Pane {
   onChooseLastMRUItem(callback: (previousRecentlyUsedItem: PaneItem) => void): Disposable;
 
   /**
-   * Invoke the given callback when ::moveActiveItemToTopOfStack has been called,
-   * terminating an MRU traversal of pane items and moving the current active item
-   * to the top of the stack. Typically bound to a modifier (e.g. CTRL) key up event.
+   * Invoke the given callback when {@link moveActiveItemToTopOfStack} has been
+   * called, terminating an MRU traversal of pane items and moving the current
+   * active item to the top of the stack. Typically bound to a modifier (e.g.,
+   * `Ctrl`) keyup event.
    */
   onDoneChoosingMRUItem(callback: () => void): Disposable;
 
-  /** Invoke the given callback with the current and future values of ::getActiveItem. */
+  /**
+   * Invoke the given callback with the current and future values of
+   * {@link getActiveItem}.
+   */
   observeActiveItem(callback: (activeItem: PaneItem) => void): Disposable;
 
   /** Invoke the given callback before items are destroyed. */
   onWillDestroyItem(callback: (event: PaneListItemShiftedEvent) => void): Disposable;
 
+  /** @private */
+  getFlexScale(): number;
+
+  /** @private */
+  setFlexScale(flexScale: number): number;
+
+  /**
+   * Called by the view layer to indicate that the pane has gained focus.
+   * @private
+   */
+  focus(): void;
+
+  /**
+   * Called by the view layer to indicate that the pane has lost focus.
+   * @private
+   */
+  blur(): true;
+
+  /**
+   * Return whether the pane is focused.
+   * @private
+   */
+  isFocused(): boolean;
+
   // Items
+
   /** Get the items in this pane. */
   getItems(): PaneItem[];
 
   /** Get the active pane item in this pane. */
   getActiveItem(): PaneItem;
+
+  /**
+   * Set the active item in the pane.
+   *
+   * When the `modifyStack` option is `true`, the new item will also be
+   * inserted into the most-recently-used stack.
+   *
+   * @private
+   */
+  setActiveItem(activeItem: PaneItem, options?: { modifyStack?: boolean }): PaneItem;
+
+  // Not marked as public, but seems pretty useful.
+  /**
+   * Return a {@link TextEditor} if the active pane item is a `TextEditor`, or
+   * `undefined` otherwise.
+   */
+  getActiveEditor(): TextEditor | undefined;
 
   /** Gets the pane's container. */
   getContainer(): PaneContainer;
@@ -492,6 +600,18 @@ export interface Pane {
 
   /** Return the item at the given index. */
   itemAtIndex(index: number): PaneItem | undefined;
+
+  /** Makes the next item in the most-recently-used stack active. */
+  activateNextRecentlyUsedItem(): void;
+
+  /** Makes the previous item in the most-recently-used stack active. */
+  activatePreviousRecentlyUsedItem(): void;
+
+  /**
+   * Moves the active item to the end of the item stack once a modifier key
+   * (typically `Ctrl`) is lifted.
+   */
+  moveActiveItemToTopOfStack(): void;
 
   /** Makes the next item active. */
   activateNextItem(): void;
@@ -511,26 +631,79 @@ export interface Pane {
   /** Activate the item at the given index. */
   activateItemAtIndex(index: number): void;
 
-  /** Make the given item active, causing it to be displayed by the pane's view. */
-  activateItem(item: PaneItem, options?: { pending: boolean }): void;
+  /**
+   * Make the given item active, causing it to be displayed by the pane's view.
+   * Will be added to the pane if it is not already present.
+   */
+  activateItem(
+    item: PaneItem,
+    options?: {
+      /**
+       * Whether the item should be added in a pending state if it does not yet
+       * exist in the pane. If so, will replace any existing pending item in
+       * the pane.
+       */
+      pending: boolean
+    }
+  ): void;
 
   /** Add the given item to the pane. */
-  addItem(item: PaneItem, options?: { index?: number | undefined; pending?: boolean | undefined }): PaneItem;
+  addItem(
+    item: PaneItem,
+    options?: {
+      /** The index at which to add the item. */
+      index?: number | undefined;
+      /**
+       * Whether the item should be added in a pending state. If so, will
+       * replace any existing pending item in the pane.
+       */
+      pending?: boolean | undefined
+    }
+  ): PaneItem;
 
-  /** Add the given items to the pane. */
+  /** Add the given items to the pane, optionally at the given index. */
   addItems(items: PaneItem[], index?: number): PaneItem[];
+
+  // (`removeItem` is definitely internal)
+
+  /**
+   * Remove the given item from the most-recently-used item stack.
+   * @private
+   */
+  removeItemFromStack(item: PaneItem): void;
 
   /** Move the given item to the given index. */
   moveItem(item: PaneItem, index: number): void;
 
-  /** Move the given item to the given index on another pane. */
+  /**
+   * Move the given item to the given index on another pane.
+   * @param pane The {@link Pane} to which to move the item.
+   * @param index The index at which it should be inserted in the new pane.
+   */
   moveItemToPane(item: PaneItem, pane: Pane, index: number): void;
 
   /** Destroy the active item and activate the next item. */
   destroyActiveItem(): Promise<boolean>;
 
-  /** Destroy the given item. */
-  destroyItem(item: PaneItem, force?: boolean): Promise<boolean>;
+  /**
+   * Destroy the given item.
+   *
+   * If the item is active, the next item will be activated. If the item is the
+   * last item, the pane will be destroyed if the `core.destroyEmptyPanes`
+   * config setting is `true`.
+   *
+   * This action can be prevented by {@link Workspace#onWillDestroyPaneItem}
+   * callbacks, in which case nothing happens.
+   *
+   * @param item The item to destroy.
+   * @param force Whether to force destruction of the item. This will ignore
+   *  the item's {@link AbstractPaneItem#isPermanentDockItem} method and will
+   *  skip any prompt-to-save behavior. (Callbacks can still prevent the
+   *  deletion of the item, however.)
+   * @returns Promise that resolves with a boolean indicating whether the item
+   *  was destroyed.
+   */
+  destroyActiveItem(item: PaneItem, force?: boolean): Promise<boolean>;
 
   /** Destroy all items. */
   destroyItems(): Promise<boolean[]>;
@@ -544,17 +717,34 @@ export interface Pane {
   /**
    * Prompt the user for a location and save the active item with the path
    * they select.
+   *
+   * @param nextAction A function that will be called — either with no argument
+   *  if the item is successfully saved, or with the error if it fails.
+   * @returns A promise that resolves with the return value of `nextAction` (if
+   *  it was provided) or `undefined`.
    */
-  saveActiveItemAs<T = void>(nextAction?: (error?: Error) => T): Promise<T> | undefined;
+  saveActiveItemAs<T = void>(nextAction?: (error?: Error) => T): Promise<T | undefined>;
 
-  /** Save the given item. */
-  saveItem<T = void>(item: PaneItem, nextAction?: (error?: Error) => T): Promise<T> | undefined;
+  /**
+   * Save the given item.
+   *
+   * @param nextAction A function that will be called — either with no argument
+   *  if the item is successfully saved, or with the error if it fails.
+   * @returns A promise that resolves with the return value of `nextAction` (if
+   *  it was provided) or `undefined`.
+   */
+  saveItem<T = void>(item: PaneItem, nextAction?: (error?: Error) => T): Promise<T | undefined>;
 
   /**
    * Prompt the user for a location and save the active item with the path
    * they select.
+   *
+   * @param nextAction A function that will be called — either with no argument
+   *  if the item is successfully saved, or with the error if it fails.
+   * @returns A promise that resolves with the return value of `nextAction` (if
+   *  it was provided) or `undefined`.
    */
-  saveItemAs<T = void>(item: PaneItem, nextAction?: (error?: Error) => T): Promise<T> | undefined;
+  saveItemAs<T = void>(item: PaneItem, nextAction?: (error?: Error) => T): Promise<T | undefined>;
 
   /** Save all items. */
   saveItems(): void;
