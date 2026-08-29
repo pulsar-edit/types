@@ -574,17 +574,17 @@ export interface Pane {
   isDestroyed(): boolean;
 
   // Splitting
-  /** Creat a new pane to the left of this pane. */
-  splitLeft(params?: { items?: PaneItem[] | undefined; copyActiveItem?: boolean | undefined }): Pane;
+  /** Create a new pane to the left of this pane. */
+  splitLeft(params?: PaneSplitParams): Pane;
 
-  /** Creat a new pane to the right of this pane. */
-  splitRight(params?: { items?: PaneItem[] | undefined; copyActiveItem?: boolean | undefined }): Pane;
+  /** Create a new pane to the right of this pane. */
+  splitRight(params?: PaneSplitParams): Pane;
 
   /** Create a new pane above the receiver. */
-  splitUp(params?: { items?: PaneItem[] | undefined; copyActiveItem?: boolean | undefined }): Pane;
+  splitUp(params?: PaneSplitParams): Pane;
 
   /** Create a new pane below the receiver. */
-  splitDown(params?: { items?: PaneItem[] | undefined; copyActiveItem?: boolean | undefined }): Pane;
+  splitDown(params?: PaneSplitParams): Pane;
 
   // Pending items
 
@@ -604,6 +604,46 @@ export interface Pane {
    * If a pending pane item exists, it will implicitly be closed.
    */
   clearPendingItem(): void;
+
+  /**
+   * If the parent is a horizonal axis, returns its first child if it is a
+   * pane; otherwise returns this pane.
+   * @private
+   */
+  findLeftmostSibling(): Pane | undefined;
+  /**
+   * If the parent is a horizonal axis, returns its last child if it is a
+   * pane; otherwise returns this pane.
+   * @private
+   */
+  findRightmostSibling(): Pane | undefined;
+  /**
+   * If the parent is a vertical axis, returns its first child if it is a
+   * pane; otherwise returns this pane.
+   * @private
+   */
+  findTopmostSibling(): Pane | undefined;
+  /**
+   * If the parent is a vertical axis, returns its last child if it is a
+   * pane; otherwise returns this pane.
+   * @private
+   */
+  findBottommostSibling(): Pane | undefined;
+
+  /**
+   * If the parent is a horizontal axis, returns its last child if it is a
+   * pane; otherwise returns a new pane created by splitting this pane
+   * rightward.
+   * @private
+   */
+  findOrCreateRightmostSibling(params: PaneSplitParams): Pane;
+  /**
+   * If the parent is a vertical axis, returns its last child if it is a
+   * pane; otherwise returns a new pane created by splitting this pane
+   * rightward.
+   * @private
+   */
+  findOrCreateBottommostSibling(params: PaneSplitParams): Pane;
 }
 
 export interface PaneListItemShiftedEvent {
