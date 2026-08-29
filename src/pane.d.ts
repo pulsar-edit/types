@@ -80,6 +80,11 @@ type PaneItemSaveDialogOptions = {
   properties?: PaneItemSaveDialogProperty[]
 };
 
+type PaneSplitParams = {
+  items?: PaneItem[] | undefined;
+  copyActiveItem?: boolean | undefined
+};
+
 /**
  * An interface implemented by “view model”–style pane items as opposed to bare
  * DOM nodes.
