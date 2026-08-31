@@ -1,4 +1,4 @@
-import { ConfigValues, Disposable, ScopeDescriptor } from "../index";
+import { ConfigValues, Disposable, KnownKeys, ScopeDescriptor } from "../index";
 
 type ConfigSchemaType = 'integer' | 'boolean' | 'array' | 'object' | 'color' | 'string' | 'number'
 
@@ -62,16 +62,14 @@ export interface Config {
   /**
    * Add a listener for changes to a given key path.
    *
-   * This is different than {@link onDidChange} in that it will immediately
-   * call your callback with the current value of the config entry.
+   * This is different than {@link onDidChange | `onDidChange`} in that it will
+   * immediately call your callback with the current value of the config entry.
    */
-  observe<T extends keyof ConfigValues>(keyPath: T, callback: (value: ConfigValues[T]) => void): Disposable;
-  /**
-   * Add a listener for changes to a given key path.
-   *
-   * This is different than {@link onDidChange} in that it will immediately
-   * call your callback with the current value of the config entry.
-   */
+  observe<T extends keyof ConfigValues>(
+    keyPath: T,
+    callback: (value: ConfigValues[T]) => void
+  ): Disposable;
+
   observe<T extends keyof ConfigValues>(
     keyPath: T,
     options: { scope: string[] | ScopeDescriptor },
@@ -81,7 +79,6 @@ export interface Config {
   /**
    * Add a listener for all configuration key changes.
    */
-  // tslint:disable-next-line:no-any
   onDidChange<T = any>(
     callback: (values: { newValue: T; oldValue: T }) => void
   ): Disposable;
@@ -90,20 +87,45 @@ export interface Config {
    */
   onDidChange<T extends keyof ConfigValues>(
     keyPath: T,
-    callback: (values: { newValue: ConfigValues[T]; oldValue?: ConfigValues[T] | undefined }) => void,
+    callback: (
+      values: {
+        newValue: ConfigValues[T];
+        oldValue?: ConfigValues[T] | undefined
+      }
+    ) => void,
   ): Disposable;
-  /**
-   * Add a listener for changes to a given key path.
-   */
   onDidChange<T extends keyof ConfigValues>(
     keyPath: T,
     options: { scope: string[] | ScopeDescriptor },
-    callback: (values: { newValue: ConfigValues[T]; oldValue?: ConfigValues[T] | undefined }) => void,
+    callback: (
+      values: {
+        newValue: ConfigValues[T];
+        oldValue?: ConfigValues[T] | undefined
+      }
+    ) => void,
   ): Disposable;
 
   // Managing Settings
-  /** Retrieves the setting for the given key. */
-  get<T extends keyof ConfigValues>(
+  /**
+   * Retrieves the setting for the given key.
+   *
+   * When the config key is recognized, the return type is automatically
+   * inferred:
+   *
+   * ```ts
+   * atom.config.get('editor.fontSize'); // -> `number` inferred
+   * ```
+   *
+   * When the config key is not recognized, the return value will be typed as
+   * `any`… but you may override this by giving an explicit generic parameter:
+   *
+   * ```ts
+   * atom.config.get<string[]>('some-unknown-package.scopeOverrides');
+   * ```
+   */
+  // This version's generic parameter relies on inference and looks up the
+  // expected return type from `ConfigValues`.
+  get<T extends KnownKeys<ConfigValues>>(
     keyPath: T,
     options?: {
       sources?: string[] | undefined;
@@ -111,6 +133,22 @@ export interface Config {
       scope?: string[] | ScopeDescriptor | undefined;
     },
   ): ConfigValues[T];
+
+  /**
+   * Retrieve a setting whose key is not present in {@link ConfigValues},
+   * asserting its type at the call site.
+   *
+   * Use this when calls to `atom.config.get` do not infer a more specific type
+   * than `any`:
+   *
+   * ```ts
+   * atom.config.get<string[]>('some-unknown-package.scopeOverrides');
+   * ```
+   */
+  get<V = any>(
+    keyPath: string,
+    options?: { sources?: string[]; excludeSources?: string[]; scope?: string[] | ScopeDescriptor },
+  ): V;
 
   /**
    * Sets the value for a configuration setting.
@@ -125,13 +163,24 @@ export interface Config {
   ): void;
 
   /** Restore the setting at `keyPath` to its default value. */
-  unset(keyPath: string, options?: { scopeSelector?: string | undefined; source?: string | undefined }): void;
+  unset(
+    keyPath: string,
+    options?: { scopeSelector?: string | undefined; source?: string | undefined }
+  ): void;
 
   /**
    * Get all of the values for the given key path, along with their associated
    * scope selector.
+   *
+   * Return value is inferred for recognized key paths. For other key paths,
+   * you may annotate with a generic parameter:
+   *
+   * ```ts
+   * atom.config.getAll<string[]>('some-unknown-package.scopeOverrides');
+   * // -> all `value` values in returned array will be of type `string[]`
+   * ```
    */
-  getAll<T extends keyof ConfigValues>(
+  getAll<T extends KnownKeys<ConfigValues>>(
     keyPath: T,
     options?: {
       sources?: string[] | undefined;
@@ -139,6 +188,15 @@ export interface Config {
       scope?: ScopeDescriptor | undefined;
     },
   ): Array<{ scopeDescriptor: ScopeDescriptor; value: ConfigValues[T] }>;
+
+  getAll<V = any>(
+    keyPath: string,
+    options?: {
+      sources?: string[] | undefined;
+      excludeSources?: string[] | undefined;
+      scope?: ScopeDescriptor | undefined;
+    },
+  ): Array<{ scopeDescriptor: ScopeDescriptor; value: V }>;
 
   /**
    * Get an Array of all of the source strings with which settings have been

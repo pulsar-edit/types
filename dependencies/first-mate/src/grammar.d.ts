@@ -32,8 +32,17 @@ export interface Grammar {
   /** The name of the Grammar. */
   readonly name: string;
 
+  /**
+   * NOTE: A TextMate grammar has no `type` property at all — only
+   * {@link WASMTreeSitterGrammar} declares one. Use that asymmetry to tell the
+   * two apart: `if ("type" in grammar)` narrows a grammar to the Tree-sitter
+   * variant.
+   */
+
   /** Undocumented: scope name of the Grammar. */
   readonly scopeName: string;
+
+  readonly fileTypes: string[];
 
   // Event Subscription
 
@@ -83,8 +92,8 @@ export interface GrammarRule {
   // https://github.com/atom/first-mate/blob/v7.0.7/src/rule.coffee
   // This is private. Don't go down the rabbit hole.
   rule: object;
-  scopeName: string;
-  contentScopeName: string;
+  scopeName?: string;
+  contentScopeName?: string;
 }
 
 /** Result returned by `Grammar.tokenizeLine`. */
@@ -101,7 +110,7 @@ export interface TokenizeLineResult {
    * To resolve ids to scope names, call {@link GrammarRegistry#scopeForId}
    * with the absolute value of the id.
    */
-  tags: Array<number | string>;
+  tags: number[];
 
   /**
    * This is a dynamic property. Invoking it will incur additional overhead,

@@ -34,6 +34,10 @@ import {
 } from "../index";
 import { CommentDelimiterSpec } from "./wasm-tree-sitter-grammar";
 
+// TODO: Undocumented within the public API. Originally this comment said
+// “don’t go down the rabbit hole,” but we should at least consider it.
+export type TextEditorOptions = object;
+
 /**
  *  This class represents all essential editing state for a single TextBuffer,
  *  including cursor and selection positions, folds, and soft wraps.
@@ -41,8 +45,7 @@ import { CommentDelimiterSpec } from "./wasm-tree-sitter-grammar";
 export class TextEditor {
   readonly id: number;
 
-  // NOTE: Undocumented within the public API. Don't go down the rabbit hole.
-  constructor(options?: object);
+  constructor(options?: TextEditorOptions);
 
   /** Get the custom HTML element for the editor. */
   getElement(): TextEditorElement;
@@ -605,7 +608,8 @@ export class TextEditor {
   ): DisplayMarker;
 
   /**
-   * Find all DisplayMarkers on the default marker layer that match the given properties.
+   * Find all {@link DisplayMarker | `DisplayMarker`}s on the default marker
+   * layer that match the given properties.
    *
    * This method finds markers based on the given properties. Markers can be
    * associated with custom properties that will be compared with basic
@@ -619,11 +623,11 @@ export class TextEditor {
     options?: { maintainHistory?: boolean | undefined; persistent?: boolean | undefined },
   ): DisplayMarkerLayer;
 
-  /** Get a DisplayMarkerLayer by id. */
-  getMarkerLayer(id: number): DisplayMarkerLayer | undefined;
+  /** Get a {@link DisplayMarkerLayer | `DisplayMarkerLayer`} by ID. */
+  getMarkerLayer(id: string): DisplayMarkerLayer | undefined;
 
   /**
-   * Get the default DisplayMarkerLayer.
+   * Get the default {@link DisplayMarkerLayer | `DisplayMarkerLayer`}.
    *
    * All marker APIs not tied to an explicit layer interact with this default
    * layer.
@@ -631,12 +635,12 @@ export class TextEditor {
   getDefaultMarkerLayer(): DisplayMarkerLayer;
 
   /** Get the DisplayMarker on the default layer for the given marker id. */
-  getMarker(id: number): DisplayMarker;
+  getMarker(id: number): DisplayMarker | undefined;
 
   /**
    * Get all DisplayMarkers on the default marker layer.
    *
-   * Consider using {@link findMarkers}.
+   * Consider using {@link findMarkers | `findMarkers`}.
    */
   getMarkers(): DisplayMarker[];
 
@@ -660,7 +664,10 @@ export class TextEditor {
    */
   setCursorBufferPosition(position: PointCompatible, options?: { autoscroll?: boolean | undefined }): void;
 
-  /** Get a {@link Cursor} at the given screen coordinates, if one exists. */
+  /**
+   * Get a {@link Cursor | `Cursor`} at the given screen coordinates, if one
+   * exists.
+   */
   getCursorAtScreenPosition(position: PointCompatible): Cursor | undefined;
 
   /**

@@ -71,7 +71,10 @@ export class TextBuffer {
   });
 
   /** Returns a plain JavaScript object representation of the TextBuffer. */
-  serialize(options?: { markerLayers?: boolean | undefined; history?: boolean | undefined }): object;
+  serialize(options?: {
+    markerLayers?: boolean | undefined;
+    history?: boolean | undefined
+  }): object;
 
   /** Returns the unique identifier for this buffer. */
   getId(): string;
@@ -356,7 +359,7 @@ export class TextBuffer {
   getMarkers(): Marker[];
 
   /** Get an existing marker by its id from the default marker layer. */
-  getMarker(id: number): Marker;
+  getMarker(id: number): Marker | undefined;
 
   /**
    * Find markers conforming to the given parameters in the default marker

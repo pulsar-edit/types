@@ -20,6 +20,8 @@ export interface Decoration {
    */
   destroy(): void;
 
+  isDestroyed(): boolean;
+
   // Event Subscription
   /**
    * Add a listener for when the decoration is updated via
@@ -48,7 +50,7 @@ export interface Decoration {
 
   // Properties
   /** Returns the Decoration's properties. */
-  getProperties(): DecorationOptions;
+  getProperties(): DecorationOptions & { id: number; order: number; };
 
   /**
    * Update the marker with new properties.

@@ -10,11 +10,9 @@ import {
   WASMTreeSitterGrammarParams
 } from "./wasm-tree-sitter-grammar";
 
-type GenericGrammar = TextMateGrammar | WASMTreeSitterGrammar
+export type GenericGrammar = TextMateGrammar | WASMTreeSitterGrammar
 
-type GrammarType = 'modern-tree-sitter' | 'textmate'
-
-type TextMateGrammarParams = {
+export type TextMateGrammarParams = {
   maxTokensPerLine?: number
   maxLineLength?: number
   limitLineLength?: boolean
@@ -32,14 +30,11 @@ type TextMateGrammarParams = {
   contentRegex?: string
 }
 
-type GrammarConstructorParams = WASMTreeSitterGrammarParams | TextMateGrammarParams
+type GrammarConstructorParams = WASMTreeSitterGrammarParams | TextMateGrammarParams;
 
-type CreateGrammarParams = {
-  type: 'modern-tree-sitter',
-  params: GrammarConstructorParams
-} | {
-  params: TextMateGrammarParams
-}
+export type CreateGrammarParams =
+  | ({ type: "modern-tree-sitter" } & WASMTreeSitterGrammarParams)
+  | ({ type?: "textmate" } & TextMateGrammarParams);
 
 /** Registry containing one or more grammars. */
 export interface GrammarRegistry {
@@ -172,7 +167,7 @@ export interface GrammarRegistry {
    * @param tags The tags returned from a call to Grammar::tokenizeLine().
    * @return An array of GrammarToken instances decoded from the given tags.
    */
-  decodeTokens(lineText: string, tags: Array<number | string>): GrammarToken[];
+  decodeTokens(lineText: string, tags: number[]): GrammarToken[];
 
   /**
    * Set a TextBuffer's language mode based on its path and content, and

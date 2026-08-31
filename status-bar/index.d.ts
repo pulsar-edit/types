@@ -14,7 +14,7 @@ export interface AddTileOptions {
    * Determines the placement of the tile within the status bar. Lower priority
    * will result in closer placement to the anchor.
    */
-  priority: number;
+  priority?: number;
 }
 
 export interface Tile {
@@ -48,4 +48,6 @@ export interface StatusBar {
 
   /** Retrieve all of the tiles on the right side of the status bar. */
   getRightTiles(): Tile[];
+
+  disableGitInfoTile(): void;
 }

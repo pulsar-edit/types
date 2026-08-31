@@ -6,17 +6,40 @@ import {
   RangeLike,
   ReadonlyEditOptions,
   TextInsertionOptions,
-  TextEditor
+  TextEditor,
+  Point,
+  SetPositionOptions,
+  Cursor
 } from "../index";
+
+export interface SetBufferRangeOptions {
+  reversed?: boolean | undefined;
+  preserveFolds?: boolean | undefined;
+  autoscroll?: boolean | undefined;
+}
+
+export interface ClearOptions {
+  autoscroll?: boolean | undefined;
+}
+
+export interface SelectWordOptions extends SetBufferRangeOptions {
+  wordRegex?: RegExp;
+  includeNonWordCharacters?: boolean;
+}
 
 /** Represents a selection in the {@link TextEditor}. */
 export interface Selection {
+  /** The cursor that belongs to this selection. */
+  readonly cursor: Cursor;
+
   // Event Subscription
   /** Calls your callback when the selection was moved. */
   onDidChangeRange(callback: (event: SelectionChangedEvent) => void): Disposable;
 
   /** Calls your callback when the selection was destroyed. */
   onDidDestroy(callback: () => void): Disposable;
+
+  destroy(): void;
 
   // Managing the selection range
   /** Returns the screen Range for the selection. */
@@ -25,10 +48,7 @@ export interface Selection {
   /** Modifies the screen range for the selection. */
   setScreenRange(
     screenRange: RangeCompatible,
-    options?: {
-      preserveFolds?: boolean | undefined;
-      autoscroll?: boolean | undefined;
-    },
+    options?: SetBufferRangeOptions
   ): void;
 
   /** Returns the buffer Range for the selection. */
@@ -37,15 +57,16 @@ export interface Selection {
   /** Modifies the buffer Range for the selection. */
   setBufferRange(
     bufferRange: RangeCompatible,
-    options?: {
-      reversed?: boolean | undefined;
-      preserveFolds?: boolean | undefined;
-      autoscroll?: boolean | undefined;
-    },
+    options?: SetBufferRangeOptions
   ): void;
 
   /** Returns the starting and ending buffer rows the selection is highlighting. */
   getBufferRowRange(): [number, number];
+
+  getHeadBufferPosition(): Point;
+  getTailBufferPosition(): Point;
+  getHeadScreenPosition(): Point;
+  getTailScreenPosition(): Point;
 
   // Info about the selection
   /** Determines if the selection contains anything. */
@@ -58,8 +79,11 @@ export interface Selection {
    */
   isReversed(): boolean;
 
-  /** Returns whether the selection is a single line or not. */
+  /** Returns whether the selection starts and ends on the same screen line. */
   isSingleScreenLine(): boolean;
+
+  /** Returns whether the selection is the latest selection in the buffer. */
+  isLastSelection(): boolean;
 
   /** Returns the text in the selection. */
   getText(): string;
@@ -71,14 +95,22 @@ export interface Selection {
   intersectsBufferRange(bufferRange: RangeLike): boolean;
 
   /** Identifies if a selection intersects with another selection. */
-  intersectsWith(otherSelection: Selection): boolean;
+  intersectsWith(otherSelection: Selection, exclusive?: boolean): boolean;
+
+  /** Returns whether the selection visits the given screen row. */
+  intersectsScreenRow(screenRow: number): boolean;
+
+  /**
+   * Returns whether the selection visits any screen rows in the implied range.
+   */
+  intersectsScreenRowRange(startRow: number, endRow: number): boolean;
 
   // Modifying the selected range
   /** Clears the selection, moving the marker to the head. */
-  clear(options?: { autoscroll?: boolean | undefined }): void;
+  clear(options?: ClearOptions): void;
 
   /** Selects the text from the current cursor position to a given screen position. */
-  selectToScreenPosition(position: PointCompatible): void;
+  selectToScreenPosition(position: PointCompatible, options?: SetPositionOptions): void;
 
   /** Selects the text from the current cursor position to a given buffer position. */
   selectToBufferPosition(position: PointCompatible): void;
@@ -174,23 +206,31 @@ export interface Selection {
   selectToBeginningOfPreviousParagraph(): void;
 
   /** Modifies the selection to encompass the current word. */
-  selectWord(): void;
+  selectWord(options?: SelectWordOptions): void;
+
+  /** Modifies the selection to encompass the current subword. */
+  selectSubword(options?: SelectWordOptions): void;
 
   /**
    * Expands the newest selection to include the entire word on which the
-   * cursors rests.
+   * cursor rests.
    */
-  expandOverWord(): void;
+  expandOverWord(options?: { autoscroll?: boolean }): void;
 
-  /** Selects an entire line in the buffer. */
-  selectLine(row: number): void;
+  /**
+   * Selects an entire line in the buffer.
+   *
+   * If `row` is omitted, the cursor’s row will be selected.
+   */
+  selectLine(row?: number, options?: SetBufferRangeOptions): void;
 
   /**
    * Expands the newest selection to include the entire line on which the cursor
    * currently rests.
+   *
    * It also includes the newline character.
    */
-  expandOverLine(): void;
+  expandOverLine(options?: { autoscroll?: boolean }): void;
 
   // Modifying the selected text
   /** Replaces text at the current selection. */
@@ -297,7 +337,7 @@ export interface Selection {
   cutToEndOfBufferLine(maintainClipboard?: boolean, options?: ReadonlyEditOptions): void;
 
   /** Copies the selection to the clipboard and then deletes it. */
-  cut(maintainClipboard?: boolean, fullLine?: boolean, options?: ReadonlyEditOptions): void;
+  cut(maintainClipboard?: boolean, fullLine?: boolean, bypassReadOnly?: boolean): void;
 
   /** Copies the current selection to the clipboard. */
   copy(maintainClipboard?: boolean, fullLine?: boolean): void;
@@ -321,7 +361,7 @@ export interface Selection {
    */
   merge(
     otherSelection: Selection,
-    options?: { preserveFolds?: boolean | undefined; autoscroll?: boolean | undefined },
+    options?: SetBufferRangeOptions,
   ): void;
 
   // Comparing to other selections

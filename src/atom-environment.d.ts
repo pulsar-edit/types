@@ -20,7 +20,8 @@ import {
   ViewRegistry,
   WindowLoadSettings,
   Workspace,
-  UI
+  UI,
+  BrowserWindow
 } from "../index";
 
 
@@ -33,58 +34,58 @@ export interface AtomEnvironment {
   /** Branding information. */
   readonly branding: Branding;
 
-  /** A CommandRegistry instance. */
+  /** A {@link CommandRegistry} instance. */
   readonly commands: CommandRegistry;
 
-  /** A Config instance. */
+  /** A {@link Config} instance. */
   readonly config: Config;
 
-  /** A Clipboard instance. */
+  /** A {@link Clipboard} instance. */
   readonly clipboard: Clipboard;
 
-  /** A ContextMenuManager instance. */
+  /** A {@link ContextMenuManager} instance. */
   readonly contextMenu: ContextMenuManager;
 
-  /** A MenuManager instance. */
+  /** A {@link MenuManager} instance. */
   readonly menu: MenuManager;
 
-  /** A KeymapManager instance. */
+  /** A {@link KeymapManager} instance. */
   readonly keymaps: KeymapManager;
 
-  /** A TooltipManager instance. */
+  /** A {@link TooltipManager} instance. */
   readonly tooltips: TooltipManager;
 
-  /** A NotificationManager instance. */
+  /** A {@link NotificationManager} instance. */
   readonly notifications: NotificationManager;
 
-  /** A Project instance. */
+  /** A {@link Project} instance. */
   readonly project: Project;
 
-  /** A GrammarRegistry instance. */
+  /** A {@link GrammarRegistry} instance. */
   readonly grammars: GrammarRegistry;
 
-  /** A HistoryManager instance. */
+  /** A {@link HistoryManager} instance. */
   readonly history: HistoryManager;
 
-  /** A PackageManager instance. */
+  /** A {@link PackageManager} instance. */
   readonly packages: PackageManager;
 
-  /** A ThemeManager instance. */
+  /** A {@link ThemeManager} instance. */
   readonly themes: ThemeManager;
 
-  /** A StyleManager instance. */
+  /** A {@link StyleManager} instance. */
   readonly styles: StyleManager;
 
-  /** A DeserializerManager instance. */
+  /** A {@link DeserializerManager} instance. */
   readonly deserializers: DeserializerManager;
 
-  /** A ViewRegistry instance. */
+  /** A {@link ViewRegistry} instance. */
   readonly views: ViewRegistry;
 
-  /** A Workspace instance. */
+  /** A {@link Workspace} instance. */
   readonly workspace: Workspace;
 
-  /** A TextEditorRegistry instance. */
+  /** A {@link TextEditorRegistry} instance. */
   readonly textEditors: TextEditorRegistry;
 
   /** A UI module. */
@@ -95,18 +96,18 @@ export interface AtomEnvironment {
   onDidBeep(callback: () => void): Disposable;
 
   /**
-  *  Invoke the given callback when there is an unhandled error, but before
-  *  the devtools pop open.
-  */
+   * Invoke the given callback when there is an unhandled error, but before the
+   * devtools pop open.
+   */
   onWillThrowError(callback: (event: PreventableExceptionThrownEvent) => void): Disposable;
 
   /** Invoke the given callback whenever there is an unhandled error. */
   onDidThrowError(callback: (event: ExceptionThrownEvent) => void): Disposable;
 
   /**
-  *  Invoke the given callback as soon as the shell environment is loaded (or
-  *  immediately if it was already loaded).
-  */
+   * Invoke the given callback as soon as the shell environment is loaded (or
+   * immediately if it was already loaded).
+   */
   whenShellEnvironmentLoaded(callback: () => void): Disposable;
 
   // Atom Details
@@ -126,9 +127,11 @@ export interface AtomEnvironment {
   getVersion(): string;
 
   /**
-  *  Gets the release channel of the Atom application.
-  *  Returns the release channel, which can be 'dev', 'nightly', 'beta', or 'stable'.
-  */
+   * Gets the release channel of the Atom application.
+   *
+   * @returns The release channel, which can be `'dev'`, `'nightly'`, `'beta'`,
+   * or `'stable'`.
+   */
   getReleaseChannel(): "dev" | "nightly" | "beta" | "stable";
 
   /** Returns a boolean that is true if the current version is an official release. */
@@ -146,7 +149,7 @@ export interface AtomEnvironment {
   // Managing the Atom Window
   /** Open a new Atom window using the given options. */
   open(params?: {
-    pathsToOpen: readonly string[];
+    pathsToOpen?: readonly string[];
     newWindow?: boolean | undefined;
     devMode?: boolean | undefined;
     safeMode?: boolean | undefined;
@@ -171,7 +174,7 @@ export interface AtomEnvironment {
   pickFolder(callback: (paths: string[] | null) => void): void;
 
   /** Get the current window. */
-  getCurrentWindow(): object;
+  getCurrentWindow(): BrowserWindow;
 
   /** Move current window to the center of the screen. */
   center(): void;
@@ -204,9 +207,9 @@ export interface AtomEnvironment {
   toggleFullScreen(): void;
 
   /**
-  * Restores the full screen and maximized state after the window has resized to prevent resize
-  * glitches.
-  */
+   * Restores the full screen and maximized state after the window has resized
+   * to prevent resize glitches.
+   */
   displayWindow(): Promise<undefined>;
 
   /** Get the dimensions of this window. */
@@ -227,54 +230,55 @@ export interface AtomEnvironment {
   beep(): void;
 
   /**
-  *  A flexible way to open a dialog akin to an alert dialog. If a callback
-  *  is provided, then the confirmation will work asynchronously, which is
-  *  recommended.
-  *
-  *  If the dialog is closed (via `Esc` key or `X` in the top corner) without
-  *  selecting a button the first button will be clicked unless a "Cancel" or "No"
-  *  button is provided.
-  *
-  *  Returns the chosen button index number if the buttons option was an array.
-  *  @param response The index of the button that was clicked.
-  *  @param checkboxChecked The checked state of the checkbox if `checkboxLabel` was set.
-  *  Otherwise false.
-  */
+   * A flexible way to open a dialog akin to an alert dialog. If a callback is
+   * provided, then the confirmation will work asynchronously, which is
+   * recommended.
+   *
+   * If the dialog is closed (via `Esc` key or `X` in the top corner) without
+   * selecting a button the first button will be clicked unless a "Cancel" or
+   * "No" button is provided.
+   *
+   * The `callback` takes two parameters: the index of the button that was
+   * clicked and the checked state of the checkbox (when `checkboxLabel` was
+   * set, or `false` if it wasn’t).
+   */
   confirm(options: ConfirmationOptions, callback: (response: number, checkboxChecked: boolean) => void): void;
 
   /**
-  *  A flexible way to open a dialog akin to an alert dialog. If a callback
-  *  is provided, then the confirmation will work asynchronously, which is
-  *  recommended.
-  *
-  *  If the dialog is closed (via `Esc` key or `X` in the top corner) without
-  *  selecting a button the first button will be clicked unless a "Cancel" or "No"
-  *  button is provided.
-  *
-  *  Returns the chosen button index number if the buttons option was an array.
-  */
-  confirm(
-    options: { message: string; detailedMessage?: string | undefined; buttons?: readonly string[] | undefined },
-  ): void;
-
-  /**
-  *  A flexible way to open a dialog akin to an alert dialog. If a callback
-  *  is provided, then the confirmation will work asynchronously, which is
-  *  recommended.
-  *
-  *  If the dialog is closed (via `Esc` key or `X` in the top corner) without
-  *  selecting a button the first button will be clicked unless a "Cancel" or "No"
-  *  button is provided.
-  *
-  *  Returns the chosen button index number if the buttons option was an array.
-  */
+   * A flexible way to open a dialog akin to an alert dialog. If a callback is
+   * provided, then the confirmation will work asynchronously, which is
+   * recommended.
+   *
+   * If the dialog is closed (via `Esc` key or `X` in the top corner) without
+   * selecting a button the first button will be clicked unless a "Cancel" or
+   * "No" button is provided.
+   *
+   * Returns the index of the chosen button in the `buttons` option.
+   */
   confirm(options: {
     message: string;
     detailedMessage?: string | undefined;
-    buttons?: readonly string[] | {
-      [key: string]: () => void;
-    } | undefined;
+    buttons?: readonly string[] | undefined;
   }): number;
+
+  /**
+   * A flexible way to open a dialog akin to an alert dialog. If a callback is
+   * provided, then the confirmation will work asynchronously, which is
+   * recommended.
+   *
+   * If the dialog is closed (via `Esc` key or `X` in the top corner) without
+   * selecting a button the first button will be clicked unless a "Cancel" or
+   * "No" button is provided.
+   *
+   * When the `buttons` option is an object of key-value pairs, the return
+   * value of this method will be the return value of the chosen button’s
+   * callback.
+   */
+  confirm<T>(options: {
+    message: string;
+    detailedMessage?: string | undefined;
+    buttons: { [key: string]: () => T };
+  }): T | undefined;
 
   // Managing the Dev Tools
   /** Open the dev tools for the current window. */
@@ -331,27 +335,29 @@ export interface ConfirmationOptions {
   icon?: object | undefined;
 
   /**
-  *  The index of the button to be used to cancel the dialog, via the `Esc` key.
-  *  By default this is assigned to the first button with "cancel" or "no" as the
-  *  label. If no such labeled buttons exist and this option is not set, 0 will be
-  *  used as the return value or callback response.
-  *
-  *  This option is ignored on Windows.
-  */
+   * The index of the button to be used to cancel the dialog, via the `Esc`
+   * key. By default this is assigned to the first button with "cancel" or "no"
+   * as the label. If no such labeled buttons exist and this option is not set,
+   * 0 will be used as the return value or callback response.
+   *
+   * This option is ignored on Windows.
+   */
   cancelId?: number | undefined;
 
   /**
-  *  On Windows, Electron will try to figure out which one of the buttons are
-  *  common buttons (like `Cancel` or `Yes`), and show the others as command links
-  *  in the dialog. This can make the dialog appear in the style of modern Windows
-  *  apps. If you don't like this behavior, you can set noLink to true.
-  */
+   * On Windows, Electron will try to figure out which one of the buttons are
+   * common buttons (like `Cancel` or `Yes`), and show the others as command
+   * links in the dialog. This can make the dialog appear in the style of
+   * modern Windows apps. If you don't like this behavior, you can set `noLink`
+   * to `true`.
+   */
   noLink?: boolean | undefined;
 
   /**
-  * Normalize the keyboard access keys across platforms.
-  * Atom defaults this to true.
-  */
+   * Normalize the keyboard access keys across platforms.
+   *
+   * Pulsar defaults this to `true`.
+   */
   normalizeAccessKeys?: boolean | undefined;
 }
 

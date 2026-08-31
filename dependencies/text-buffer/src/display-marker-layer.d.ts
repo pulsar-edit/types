@@ -1,7 +1,6 @@
 import { Disposable } from "../../../index";
 import {
   DisplayMarker,
-  Marker,
   PointCompatible,
   RangeCompatible
 } from "./text-buffer";
@@ -43,7 +42,7 @@ export interface DisplayMarkerLayer {
    * this layer. Avoid this method for optimal performance when interacting
    * with layers that could contain large numbers of markers.
    */
-  onDidCreateMarker(callback: (marker: DisplayMarker | Marker) => void): Disposable;
+  onDidCreateMarker(callback: (marker: DisplayMarker) => void): Disposable;
 
   // Marker creation
   /** Create a marker with the given screen range. */
@@ -93,8 +92,8 @@ export interface DisplayMarkerLayer {
   ): DisplayMarker;
 
   // Querying
-  /** Get an existing marker by its id. */
-  getMarker(id: number): DisplayMarker;
+  /** Get an existing marker by its ID. */
+  getMarker(id: number): DisplayMarker | undefined;
 
   /** Get all markers in the layer. */
   getMarkers(): DisplayMarker[];

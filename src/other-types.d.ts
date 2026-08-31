@@ -7,6 +7,7 @@ import {
   MarkerLayer,
   Pane,
   Point,
+  RangeCompatible,
   TextEditor
 } from "../index";
 
@@ -89,8 +90,11 @@ export interface HandleableErrorEvent {
 }
 
 export interface TextEditorObservedEvent {
+  /** The {@link TextEditor} that this event relates to. */
   textEditor: TextEditor;
+  /** The {@link Pane} containing the text editor. */
   pane: Pane;
+  /** The index of the text editor in its pane. */
   index: number;
 }
 
@@ -281,3 +285,34 @@ export interface TestRunnerParams {
    */
   headless: boolean;
 }
+
+/**
+ * A subset of Electron's `BrowserWindow`, describing the members that are
+ * useful from a Pulsar package. Declared here rather than imported so that
+ * this package doesn't depend on `electron`.
+ *
+ * Cast to Electron's own `BrowserWindow` if you need the full surface.
+ */
+export interface BrowserWindow {
+  getSize(): [number, number];
+  setSize(width: number, height: number): void;
+  getPosition(): [number, number];
+  setPosition(x: number, y: number): void;
+  isMaximized(): boolean;
+  maximize(): void;
+  unmaximize(): void;
+  isFullScreen(): boolean;
+  setFullScreen(flag: boolean): void;
+  setTitle(title: string): void;
+  getTitle(): string;
+  focus(): void;
+  blur(): void;
+  isFocused(): boolean;
+  close(): void;
+  reload(): void;
+}
+
+export type TextEdit = {
+  oldText?: string;
+  newText: string;
+} & ({ range: RangeCompatible; } | { oldRange: RangeCompatible; });

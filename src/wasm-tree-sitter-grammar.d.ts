@@ -37,7 +37,9 @@ type StandardQueryType =
 /**
  * An arbitrary query name that can be used by a community package.
  */
-type CustomQueryType = string;
+// The `& {}` makes it so that `StandardQueryType | CustomQueryType` doesn't
+// condense into a mere `string`.
+type CustomQueryType = string & {};
 
 type DidChangeQueryPayload = {
   filePath: string,
@@ -53,14 +55,16 @@ type LanguageScopeFunction = (
 export type InjectionPoint = {
   /** The name of the syntax node that may embed other languages. */
   type: string,
+
   /**
    * A function that is called with syntax nodes of the specified type. Can
-   * return a string that will be tested against grammars' `injectionRegex`
+   * return a string that will be tested against grammars’ `injectionRegex`
    * properties in order to match this injection point to a given language.
    *
    * If this callback returns `undefined` or `null`, the injection will fail.
    */
   language(node: Node): string | undefined,
+
   /**
    * A function that is called with syntax nodes of the specified type. Should
    * return a {@link Node} (or an array of {@link Node}s) to identify the exact
@@ -77,7 +81,7 @@ export type InjectionPoint = {
   /**
    * Whether the children of nodes returned by `content` should be included
    * in the injection range. Defaults to `false`, meaning that for every node
-   * returned by the `content` function, the ranges of all that node's children
+   * returned by the `content` function, the ranges of all that node’s children
    * will be "subtracted" from the injection range.
    *
    * When `true`, the full content ranges of all nodes returned from the
@@ -86,12 +90,12 @@ export type InjectionPoint = {
   includeChildren?: boolean,
 
   /**
-  * Whether the injection ranges should include any newline characters that
-  * may exist in between injection ranges. Defaults to `false`.
-  *
-  * Grammars like ERB and EJS need this so that they do not interpret two
-  * different embedded code sections on different lines as occurring on the
-  * same line.
+   * Whether the injection ranges should include any newline characters that
+   * may exist in between injection ranges. Defaults to `false`.
+   *
+   * Grammars like ERB and EJS need to specify `true` so that they do not
+   * interpret two different embedded code sections on different lines as
+   * occurring on the same line.
    */
   newlinesBetween?: boolean,
 
@@ -138,23 +142,34 @@ type TreeSitterParams = {
 export type WASMTreeSitterGrammarParams = {
   name: string;
   scopeName: string;
-  contentRegex?: string | string[]
-  firstLineRegex?: string | string[]
-  treeSitter: TreeSitterParams,
+  contentRegex?: string | string[];
+  injectionRegex?: string;
+  injectionRegExp?: string;
+  firstLineRegex?: string | string[];
+  treeSitter: TreeSitterParams;
+  fileTypes?: string[];
   comments?: {
-    start?: string,
-    end?: string
-  }
+    start?: string;
+    end?: string;
+  };
 }
 
 /**
- *  A grammar responsible for language-specific features like syntax
- *  highlighting, indentation, and code folding. Uses Tree-sitter as its parsing
- *  system.
+ * A grammar responsible for language-specific features like syntax
+ * highlighting, indentation, and code folding. Uses Tree-sitter as its parsing
+ * system.
  */
 export interface WASMTreeSitterGrammar extends Grammar {
   /** The name of the grammar. */
   readonly name: string;
+
+  /**
+   * The grammar type. Any grammar with a `type` of `modern-tree-sitter` must
+   * be a `WASMTreeSitterGrammar`, and any grammar missing a `type` must be a
+   * TextMate `Grammar`. You may therefore trigger type inference on a
+   * `Grammar` by checking `'type' in someGrammar`.
+   */
+  readonly type: "modern-tree-sitter";
 
   /** Undocumented: Root scope name of the grammar. */
   readonly scopeName: string;
@@ -166,6 +181,7 @@ export interface WASMTreeSitterGrammar extends Grammar {
   ): WASMTreeSitterGrammar;
 
   // Callbacks
+  /** @deprecated */
   onDidUpdate(callback: () => void): Disposable;
 
   /**
@@ -177,7 +193,7 @@ export interface WASMTreeSitterGrammar extends Grammar {
    * - The user is editing query files in dev mode; Pulsar will automatically
    *   reload queries in dev mode after changes.
    * - A community packge is altering a query file via an API like
-   *   {@link setQueryForTest}.
+   *   {@link setQueryForTest | `setQueryForTest`}.
    */
   onDidChangeQuery(callback: (payload: DidChangeQueryPayload) => void): Disposable;
   onDidChangeQueryFile(callback: (payload: DidChangeQueryPayload) => void): Disposable;
@@ -191,7 +207,8 @@ export interface WASMTreeSitterGrammar extends Grammar {
    * Undocumented: Adds an injection point by which this language can inject
    * another language during parsing.
    *
-   * Do not call this directly; prefer {@link GrammarRegistry#addInjectionPoint}.
+   * Do not call this directly; prefer
+   * {@link GrammarRegistry.addInjectionPoint | `GrammarRegistry#addInjectionPoint`}.
    */
   addInjectionPoint(injectionPoint: InjectionPoint): void;
 
@@ -199,12 +216,11 @@ export interface WASMTreeSitterGrammar extends Grammar {
    * Undocumented: Removes an injection point that was previously added.
    *
    * Do not call this directly; instead, use
-   * {@link GrammarRegistry#addInjectionPoint} to add the injection point, then
-   * retain the returned {@link Disposable} so you can use it to remove the
-   * injection point you added.
+   * {@link GrammarRegistry.addInjectionPoint | `GrammarRegistry#addInjectionPoint`}.
+   * to add the injection point, then retain the returned `Disposable` so you
+   * can use it to remove the injection point you added.
    */
   removeInjectionPoint(injectionPoint: InjectionPoint): void;
-
 
   /**
    * Retrieve all known comment delimiters for this grammar.
@@ -274,6 +290,7 @@ export interface WASMTreeSitterGrammar extends Grammar {
   /**
    * Tokenize all lines in the given text.
    *
+   * @deprecated
    * @param text A string containing one or more lines.
    * @return An array of token arrays for each line tokenized.
    */
@@ -282,6 +299,7 @@ export interface WASMTreeSitterGrammar extends Grammar {
   /**
    * Tokenize the line of text.
    *
+   * @deprecated
    * @param line A string of text to tokenize.
    * @param ruleStack An optional array of rules previously returned from this
    *   method. This should be null when tokenizing the first line in the file.
@@ -294,6 +312,7 @@ export interface WASMTreeSitterGrammar extends Grammar {
   /**
    * Tokenize the line of text.
    *
+   * @deprecated
    * @param line A string of text to tokenize.
    * @param ruleStack An optional array of rules previously returned from this
    *   method. This should be null when tokenizing the first line in the file.

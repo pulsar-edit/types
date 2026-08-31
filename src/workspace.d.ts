@@ -1,14 +1,15 @@
 import {
-  AbstractPaneItem,
   CancellablePromise,
   Disposable,
   Dock,
   Pane,
+  PaneItem,
   PaneItemObservedEvent,
   PaneItemOpenedEvent,
   Panel,
   TextEditor,
   TextEditorObservedEvent,
+  TextEditorOptions,
   ViewModel,
   ViewRegistry,
   WorkspaceCenter,
@@ -20,14 +21,6 @@ export type AddPanelOptions<T> = {
   priority?: number | undefined
 };
 
-export type TextEditorAddedEvent = {
-  /** The {@link TextEditor} that was added. */
-  textEditor: TextEditor;
-  /** The {@link Pane} containing the added text editor. */
-  pane: Pane;
-  /** The index of the added text editor in its pane. */
-  index: number;
-}
 
 /** Represents the state of the user interface for the entire window. */
 export interface Workspace {
@@ -42,13 +35,13 @@ export interface Workspace {
    * Invoke the given callback with all current and future panes items in the
    * workspace.
    */
-  observePaneItems(callback: (item: object) => void): Disposable;
+  observePaneItems(callback: (item: PaneItem) => void): Disposable;
 
   /** Invoke the given callback when the active pane item changes. */
-  onDidChangeActivePaneItem(callback: (item: object) => void): Disposable;
+  onDidChangeActivePaneItem(callback: (item: PaneItem) => void): Disposable;
 
   /** Invoke the given callback when the active pane item stops changing. */
-  onDidStopChangingActivePaneItem(callback: (item: object) => void): Disposable;
+  onDidStopChangingActivePaneItem(callback: (item: PaneItem) => void): Disposable;
 
   /**
    * Invoke the given callback when a text editor becomes the active text
@@ -57,15 +50,10 @@ export interface Workspace {
   onDidChangeActiveTextEditor(callback: (editor?: TextEditor) => void): Disposable;
 
   /**
-   * Invoke the given callback when a text editor is added to the workspace.
-   */
-  onDidAddTextEditor(callback: (event: TextEditorAddedEvent) => void): Disposable;
-
-  /**
    * Invoke the given callback with the current active pane item and with all
    * future active pane items in the workspace.
    */
-  observeActivePaneItem(callback: (item: object) => void): Disposable;
+  observeActivePaneItem(callback: (item: PaneItem) => void): Disposable;
 
   /**
    * Invoke the given callback with the current active text editor (if any),
@@ -133,7 +121,7 @@ export interface Workspace {
    * activated. If no URI is given, or no registered opener can open the URI, a
    * new empty TextEditor will be created.
    */
-  open(uri: string, options?: WorkspaceOpenOptions): Promise<object>;
+  open(uri: string, options?: WorkspaceOpenOptions): Promise<PaneItem>;
 
   /**
    * Opens the given item in Pulsar asynchronously.
@@ -157,7 +145,7 @@ export interface Workspace {
    *
    * Returns a boolean indicating whether any items were found (and hidden).
    */
-  hide(itemOrURI: object | string): boolean;
+  hide(itemOrURI: PaneItem | string): boolean;
 
   /**
    * Search the workspace for items matching the given URI. If any are found,
@@ -165,7 +153,7 @@ export interface Workspace {
    *
    * Returns a Promise that resolves when the item is shown or hidden.
    */
-  toggle(itemOrURI: object | string): Promise<void>;
+  toggle(itemOrURI: PaneItem | string): Promise<void>;
 
   /**
    * Creates a new item that corresponds to the provided URI.
@@ -173,16 +161,16 @@ export interface Workspace {
    * If no URI is given, or no registered opener can open the URI, a new empty
    * TextEditor will be created.
    */
-  createItemForURI(uri: string): Promise<object | TextEditor>;
+  createItemForURI(uri: string): Promise<PaneItem | TextEditor>;
 
   /** Returns a boolean that is true if object is a TextEditor. */
-  isTextEditor(object: object): object is TextEditor;
+  isTextEditor(item: PaneItem): item is TextEditor;
 
   /**
    * Asynchronously reopens the last-closed item's URI if it hasn't already
    * been reopened.
    */
-  reopenItem(): Promise<object | undefined>;
+  reopenItem(): Promise<PaneItem | undefined>;
 
   /**
    * Register an opener for a URI.
@@ -213,10 +201,10 @@ export interface Workspace {
    * `workspaceOpeners` field to your `package.json` containing an array of URI
    * strings.
    */
-  addOpener(opener: (uri: string, options?: WorkspaceOpenOptions) => AbstractPaneItem | undefined): Disposable;
+  addOpener(opener: (uri: string, options?: WorkspaceOpenOptions) => PaneItem | undefined): Disposable;
 
   /** Create a new text editor. */
-  buildTextEditor(params: object): TextEditor;
+  buildTextEditor(params: TextEditorOptions): TextEditor;
 
   /** Return whether the workspace is destroyed. */
   isDestroyed(): boolean;
@@ -226,15 +214,15 @@ export interface Workspace {
 
   // Pane Items
   /** Get all pane items in the workspace. */
-  getPaneItems(): object[];
+  getPaneItems(): PaneItem[];
 
   /** Get the active Pane's active item. */
-  getActivePaneItem(): object;
+  getActivePaneItem(): PaneItem | undefined;
 
   /** Get all text editors in the workspace. */
   getTextEditors(): TextEditor[];
 
-  /** Get the workspace center's active item if it is a TextEditor. */
+  /** Get the workspace center's active item if it is a {@link TextEditor}. */
   getActiveTextEditor(): TextEditor | undefined;
 
   // Panes
@@ -257,16 +245,16 @@ export interface Workspace {
   paneContainerForURI(uri: string): Dock | WorkspaceCenter | undefined;
 
   /** Get the first pane container that contains the given item. */
-  paneContainerForItem(item: object): Dock | WorkspaceCenter | undefined;
+  paneContainerForItem(item: PaneItem): Dock | WorkspaceCenter | undefined;
 
   /** Get the first Pane with an item for the given URI. */
   paneForURI(uri: string): Pane | undefined;
 
   /** Get the Pane containing the given item. */
-  paneForItem(item: object): Pane | undefined;
+  paneForItem(item: PaneItem): Pane | undefined;
 
   // Pane Locations
-  /** Get the WorkspaceCenter at the center of the editor window. */
+  /** Get the {@link WorkspaceCenter} at the center of the editor window. */
   getCenter(): WorkspaceCenter;
 
   /** Get the Dock to the left of the editor window. */

@@ -4,6 +4,11 @@ import { Point, PointCompatible, Range, RangeCompatible } from "./text-buffer";
 /**
  * Represents a buffer annotation that remains logically stationary even as the
  * buffer changes.
+ *
+ * Use a `Marker` when you want to track a logical range of the buffer for
+ * reasons unrelated to display. Anything display-related (like a decoration)
+ * should use `DisplayMarker` instead because `DisplayMarker` is also aware of
+ * screen coordinates (which can vary for reasons of line-wrapping).
  */
 export interface Marker {
   /** The identifier for this Marker. */

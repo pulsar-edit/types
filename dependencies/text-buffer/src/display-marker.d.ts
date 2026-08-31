@@ -15,7 +15,7 @@ import {
  * in the buffer over time.
  */
 export interface DisplayMarker {
-  id: string;
+  readonly id: number;
 
   // Construction and Destruction
   /**
@@ -70,8 +70,13 @@ export interface DisplayMarker {
   /** Returns an Object containing any custom properties associated with the marker. */
   getProperties(): object;
 
-  /** Merges an Object containing new properties into the marker's existing properties. */
-  setProperties(properties: object): void;
+  /**
+   * Merges an object containing new properties into the marker's existing
+   * properties.
+   *
+   * @return Whether the action changed anything about the marker.
+   */
+  setProperties(properties: object): boolean;
 
   /** Returns whether this marker matches the given parameters. */
   matchesProperties(attributes: FindDisplayMarkerOptions): boolean;
@@ -93,56 +98,95 @@ export interface DisplayMarker {
   /** Gets the screen range of this marker. */
   getScreenRange(): Range;
 
-  /** Modifies the buffer range of this marker. */
-  setBufferRange(bufferRange: RangeCompatible, properties?: { reversed: boolean }): void;
+  /**
+   * Modifies the buffer range of this marker.
+   *
+   * @return Whether the action changed anything about the marker.
+   */
+  setBufferRange(
+    bufferRange: RangeCompatible,
+    properties?: { reversed?: boolean, exclusive?: boolean }
+  ): boolean;
 
-  /** Modifies the screen range of this marker. */
+  /**
+   * Modifies the screen range of this marker.
+   *
+   * @return Whether the action changed anything about the marker.
+   */
   setScreenRange(
     screenRange: RangeCompatible,
-    options?: { reversed?: boolean | undefined; clipDirection?: "backward" | "forward" | "closest" | undefined },
-  ): void;
+    options?: {
+      reversed?: boolean;
+      exclusive?: boolean;
+      clipDirection?: "backward" | "forward" | "closest" | undefined
+    },
+  ): boolean;
 
   /**
    * Retrieves the screen position of the marker's start. This will always be
    * less than or equal to the result of DisplayMarker::getEndScreenPosition.
    */
-  getStartScreenPosition(options?: { clipDirection: "backward" | "forward" | "closest" }): Point;
+  getStartScreenPosition(options?: {
+    clipDirection?: "backward" | "forward" | "closest"
+  }): Point;
 
   /**
    * Retrieves the screen position of the marker's end. This will always be
    * greater than or equal to the result of {@link getStartScreenPosition}.
    */
-  getEndScreenPosition(options?: { clipDirection: "backward" | "forward" | "closest" }): Point;
+  getEndScreenPosition(options?: {
+    clipDirection?: "backward" | "forward" | "closest"
+  }): Point;
 
   /** Retrieves the buffer position of the marker's head. */
   getHeadBufferPosition(): Point;
 
-  /** Sets the buffer position of the marker's head. */
-  setHeadBufferPosition(bufferPosition: PointCompatible): void;
+  /**
+   * Sets the buffer position of the marker's head.
+   *
+   * @return Whether the action changed anything about the marker.
+   */
+  setHeadBufferPosition(bufferPosition: PointCompatible): boolean;
 
   /** Retrieves the screen position of the marker's head. */
-  getHeadScreenPosition(options?: { clipDirection: "backward" | "forward" | "closest" }): Point;
+  getHeadScreenPosition(options?: {
+    clipDirection?: "backward" | "forward" | "closest"
+  }): Point;
 
-  /** Sets the screen position of the marker's head. */
+  /**
+   * Sets the screen position of the marker's head.
+   *
+   * @return Whether the action changed anything about the marker.
+   */
   setHeadScreenPosition(
     screenPosition: PointCompatible,
-    options?: { clipDirection: "backward" | "forward" | "closest" },
-  ): void;
+    options?: { clipDirection?: "backward" | "forward" | "closest" },
+  ): boolean;
 
   /** Retrieves the buffer position of the marker's tail. */
   getTailBufferPosition(): Point;
 
-  /** Sets the buffer position of the marker's tail. */
-  setTailBufferPosition(bufferPosition: PointCompatible): void;
+  /**
+   * Sets the buffer position of the marker's tail.
+   *
+   * @return Whether the action changed anything about the marker.
+   */
+  setTailBufferPosition(bufferPosition: PointCompatible): boolean;
 
   /** Retrieves the screen position of the marker's tail. */
-  getTailScreenPosition(options?: { clipDirection: "backward" | "forward" | "closest" }): Point;
+  getTailScreenPosition(options?: {
+    clipDirection?: "backward" | "forward" | "closest"
+  }): Point;
 
-  /** Sets the screen position of the marker's tail. */
+  /**
+   * Sets the screen position of the marker's tail.
+   *
+   * @return Whether the action changed anything about the marker.
+   */
   setTailScreenPosition(
     screenPosition: PointCompatible,
-    options?: { clipDirection: "backward" | "forward" | "closest" },
-  ): void;
+    options?: { clipDirection?: "backward" | "forward" | "closest" },
+  ): boolean;
 
   /**
    * Retrieves the buffer position of the marker's start. This will always be
@@ -164,14 +208,18 @@ export interface DisplayMarker {
    * Plants the marker's tail at the current head position. After calling the
    * marker's tail position will be its head position at the time of the call,
    * regardless of where the marker's head is moved.
+   *
+   * @return Whether the action changed anything about the marker.
    */
-  plantTail(): void;
+  plantTail(): boolean;
 
   /**
    * Removes the marker's tail. After calling the marker's head position will
    * be reported as its current tail position until the tail is planted again.
+   *
+   * @return Whether the action changed anything about the marker.
    */
-  clearTail(): void;
+  clearTail(): boolean;
 }
 
 export interface DisplayMarkerChangedEvent {

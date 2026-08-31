@@ -287,14 +287,18 @@ export interface AbstractPaneItem extends ViewModel {
    * from this method unless and until your pane item is “saved,” however you
    * choose to define it.
    */
-  save?(filePath: string): void | Promise<void>;
+  saveAs?(filePath: string): void | Promise<void>;
 
   /**
-   * Return the local path associated with this item.
+   * Return the local path associated with this item. If the item has a file on
+   * disk, the path to that file should be returned; if it does not, you may
+   * still return a path in order to set the initial location of the “save as”
+   * dialog.
    *
-   * This is used to set the initial location of the “save as” dialog.
+   * If an item has no file on disk and does not want to suggest a path, you
+   * may return `undefined` instead.
    */
-  getPath?(): string;
+  getPath?(): string | undefined;
 
   /**
    * Return options for a save dialog that is invoked on this pane item.
@@ -316,7 +320,62 @@ export interface AbstractPaneItem extends ViewModel {
    * will indicate this modified state the same way it does for a modified
    * buffer.
    */
-  isModified?(): boolean
+  isModified?(): boolean;
+
+  /**
+   * Register a callback to be notified when the item’s “modified” status
+   * changes. Must return a {@link Disposable}.
+   *
+   * If you implement {@link isModified}, you should also implement this
+   * method. When this method exists, the workspace will automatically call it
+   * so it can subscribe to changes in your item’s “modified” status.
+   *
+   * @since 1.133.0
+   */
+  onDidChangeModified?(callback: (newModified: boolean) => unknown): Disposable
+
+  /**
+   * Return whether the item is in a “deleted” state.
+   *
+   * If this method is implemented and returns `true`, the editor may give the
+   * buffer’s tab a visual treatment that alludes to the state — for example,
+   * red text or a strike-through decoration.
+   *
+   * The exact semantics of “deleted” vary based on what the pane item is. For
+   * an editor, `isDeleted` will return `true` when the file _used to_ have a
+   * backing file on disk, but no longer does. If the user saves the editor
+   * contents to disk again, `isDeleted` will thereafter return `false`.
+   *
+   * @since 1.133.0
+   */
+  isDeleted?(): boolean;
+
+  /**
+   * Register a callback to be notified when the item’s “deleted” status
+   * changes from `false` to `true`. Must return a {@link Disposable}.
+   *
+   * If you implement {@link isDeleted}, you should also implement this method.
+   * When this method exists, the workspace will use it to subscribe to changes
+   * in your item’s “deleted” status.
+   *
+   * @since 1.133.0
+   */
+  onDidDelete?(callback: () => unknown): Disposable;
+
+  /**
+   * Register a callback to be notified when the item’s “deleted” status
+   * changes. Must return a {@link Disposable}.
+   *
+   * Unlike {@link onDidDelete}, this callback will fire even when “deleted”
+   * status changes from `true` to `false`.
+   *
+   * If you implement {@link isDeleted}, you should also implement this method.
+   * When this method exists, the workspace will use it to subscribe to changes
+   * in your item’s “deleted” status.
+   *
+   * @since 1.132.0
+   */
+  onDidChangeDeletedStatus?(callback: (newDeleted: boolean) => unknown): Disposable;
 
   /**
    * Return whether the item is in a “conflicted” state.
@@ -347,6 +406,8 @@ export interface AbstractPaneItem extends ViewModel {
    * If you implement {@link isInConflict}, you should also implement this
    * method. When this method exists, the workspace will use it to subscribe
    * to changes in your item’s “conflicted” status.
+   *
+   * @since 1.132.0
    */
   onDidConflict?(callback: () => unknown): Disposable;
 
@@ -363,7 +424,7 @@ export interface AbstractPaneItem extends ViewModel {
    *
    * @since 1.132.0
    */
-  onDidChangeConflictedStatus(callback: (newConflicted: boolean) => unknown): Disposable;
+  onDidChangeConflictedStatus?(callback: (newConflicted: boolean) => unknown): Disposable;
 
   /**
    * Create a copy of the current pane item.
@@ -572,8 +633,10 @@ export interface Pane {
   /** Get the items in this pane. */
   getItems(): PaneItem[];
 
-  /** Get the active pane item in this pane. */
-  getActiveItem(): PaneItem;
+  /**
+   * Get the active pane item in this pane, or `undefined` if the pane is empty.
+   */
+  getActiveItem(): PaneItem | undefined;
 
   /**
    * Set the active item in the pane.
@@ -703,7 +766,7 @@ export interface Pane {
    * @returns Promise that resolves with a boolean indicating whether the item
    *  was destroyed.
    */
-  destroyActiveItem(item: PaneItem, force?: boolean): Promise<boolean>;
+  destroyItem(item: PaneItem, force?: boolean): Promise<boolean>;
 
   /** Destroy all items. */
   destroyItems(): Promise<boolean[]>;

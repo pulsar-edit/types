@@ -61,36 +61,44 @@ export type CommandRegistryListener<TargetType extends EventTarget = EventTarget
  */
 export interface CommandRegistry {
   /** Register a single command. */
+  // When `target` is a string and happens to match a known tag name, we can
+  // infer the type of `currentTarget` on the event listener. When it's a more
+  // complex selector (or a tag we don't recognize) it falls back to inferring
+  // that `currentTarget` is an `EventTarget` (which is true, if vague).
+  //
+  // TODO: We can improve the accuracy of the inference here if we use
+  // template-literal types, as long as we're careful not to over-infer on
+  // selectors like `atom-text-editor, div` so that we don't make things worse
+  // relative to the status quo. (Also requires TS 4.8, but that should be safe
+  // to rely on.)
   add<T extends keyof CommandRegistryTargetMap>(
     target: T,
     commandName: string,
     listener: CommandRegistryListener<CommandRegistryTargetMap[T]>,
+    throwOnInvalidSelector?: boolean
   ): Disposable;
-  /** Register a single command. */
-  add<T extends Node>(target: T, commandName: string, listener: CommandRegistryListener<T>): Disposable;
-  /** Register a single command. */
-  add<T extends string>(target: T, commandName: string, listener: CommandRegistryListener): Disposable;
+  add<T extends Node>(
+    target: T,
+    commandName: string,
+    listener: CommandRegistryListener<T>,
+    throwOnInvalidSelector?: boolean
+  ): Disposable;
 
   /** Register multiple commands. */
   add<T extends keyof CommandRegistryTargetMap>(
     target: T,
     commands: {
       [key: string]: CommandRegistryListener<CommandRegistryTargetMap[T]>;
-    }
+    },
+    throwOnInvalidSelector?: boolean
   ): CompositeDisposable;
-  /** Register multiple commands. */
   add<T extends Node>(
     target: T,
     commands: {
       [key: string]: CommandRegistryListener<T>;
-    }
+    },
+    throwOnInvalidSelector?: boolean
   ): CompositeDisposable;
-  add<T extends string>(
-    target: T,
-    commands: {
-      [key: string]: CommandRegistryListener;
-    }
-  ) : CompositeDisposable;
 
   /** Find all registered commands matching a query. */
   findCommands(params: {
@@ -108,7 +116,7 @@ export interface CommandRegistry {
    * @return Either a promise that resolves after all handlers complete or
    * `null` if no handlers were matched.
    */
-  dispatch(target: Node, commandName: string): Promise<void> | null;
+  dispatch(target: Node, commandName: string, detail?: unknown): Promise<void> | null;
 
   /** Invoke the given callback before dispatching a command event. */
   onWillDispatch(callback: (event: CommandEvent) => void): Disposable;

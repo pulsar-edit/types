@@ -1,4 +1,8 @@
-import { DisplayMarker, Disposable, Point, PointCompatible, Range, ScopeDescriptor } from "../index";
+import { ClearOptions, DisplayMarker, Disposable, Point, PointCompatible, Range, ScopeDescriptor, SelectWordOptions } from "../index";
+
+export interface SetPositionOptions {
+  autoscroll?: boolean;
+}
 
 /**
  *  The Cursor class represents the little blinking line identifying where text
@@ -12,18 +16,17 @@ export interface Cursor {
   /** Calls your callback when the cursor is destroyed. */
   onDidDestroy(callback: () => void): Disposable;
 
-  /** Calls your callback when the cursor's visibility has changed. */
-  onDidChangeVisibility(callback: (visibility: boolean) => void): Disposable;
+  destroy(): void;
 
   // Managing Cursor Position
   /** Moves a cursor to a given screen position. */
-  setScreenPosition(screenPosition: PointCompatible, options?: { autoscroll?: boolean | undefined }): void;
+  setScreenPosition(screenPosition: PointCompatible, options?: SetPositionOptions): void;
 
   /** Returns the screen position of the cursor as a Point. */
   getScreenPosition(): Point;
 
   /** Moves a cursor to a given buffer position. */
-  setBufferPosition(bufferPosition: PointCompatible, options?: { autoscroll?: boolean | undefined }): void;
+  setBufferPosition(bufferPosition: PointCompatible, options?: SetPositionOptions): void;
 
   /** Returns the current buffer position as an Array. */
   getBufferPosition(): Point;
@@ -182,22 +185,20 @@ export interface Cursor {
   getNextWordBoundaryBufferPosition(options?: { wordRegex?: RegExp | undefined }): Point;
 
   /** Retrieves the buffer position of where the current word starts. */
-  getBeginningOfCurrentWordBufferPosition(options?: {
-    wordRegex?: RegExp | undefined;
-    includeNonWordCharacters?: boolean | undefined;
-    allowPrevious?: boolean | undefined;
-  }): Point;
+  getBeginningOfCurrentWordBufferPosition(
+    options?: SelectWordOptions & { allowPrevious?: boolean }
+  ): Point;
 
   /** Retrieves the buffer position of where the current word ends. */
   getEndOfCurrentWordBufferPosition(
-    options?: { wordRegex?: RegExp | undefined; includeNonWordCharacters?: boolean | undefined },
+    options?: SelectWordOptions & { allowNext?: boolean },
   ): Point;
 
   /** Retrieves the buffer position of where the next word starts. */
   getBeginningOfNextWordBufferPosition(options?: { wordRegex?: RegExp | undefined }): Point;
 
   /** Returns the buffer Range occupied by the word located under the cursor. */
-  getCurrentWordBufferRange(options?: { wordRegex?: RegExp | undefined }): Range;
+  getCurrentWordBufferRange(options?: SelectWordOptions): Range;
 
   /** Returns the buffer Range for the current line. */
   getCurrentLineBufferRange(options?: { includeNewline?: boolean | undefined }): Range;
@@ -213,13 +214,6 @@ export interface Cursor {
   /** Returns the characters preceding the cursor in the current word. */
   getCurrentWordPrefix(): string;
 
-  // Visibility
-  /** Sets whether the cursor is visible. */
-  setVisible(visible: boolean): void;
-
-  /** Returns the visibility of the cursor. */
-  isVisible(): boolean;
-
   // Comparing to another cursor
   /**
    * Compare this cursor's buffer position to another cursor's buffer position.
@@ -229,11 +223,8 @@ export interface Cursor {
   compare(otherCursor: Cursor): number;
 
   // Utilities
-  /** Prevents this cursor from causing scrolling. */
-  clearAutoscroll(): void;
-
   /** Deselects the current selection. */
-  clearSelection(): void;
+  clearSelection(options?: ClearOptions): void;
 
   /** Get the RegExp used by the cursor to determine what a "word" is. */
   wordRegExp(options?: { includeNonWordCharacters?: boolean | undefined }): RegExp;

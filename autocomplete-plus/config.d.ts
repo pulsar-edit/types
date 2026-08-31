@@ -26,6 +26,7 @@ declare module "atom" {
      * the suggestion list and have it inserted into the file.
      */
     "autocomplete-plus.confirmCompletion":
+      | "none"
       | "tab"
       | "enter"
       | "tab and enter"
@@ -102,12 +103,6 @@ declare module "atom" {
     "autocomplete-plus.suggestionListFollows": "Word" | "Cursor";
 
     /**
-     * If you're having trouble with autocomplete, you may consider falling
-     * back to the Symbol provider and filing an issue.
-     */
-    "autocomplete-plus.defaultProvider": "Subsequence" | "Symbol";
-
-    /**
      * Don't auto-activate when any of these classes are present in the editor.
      */
     "autocomplete-plus.suppressActivationForEditorClasses": string[];
@@ -117,11 +112,6 @@ declare module "atom" {
      * suffix of the chosen suggestion.
      */
     "autocomplete-plus.consumeSuffix": boolean;
-
-    /**
-     * Prefers runs of consecutive characters, acronyms and start of words.
-     */
-    "autocomplete-plus.useAlternateScoring": boolean;
 
     /**
      * Gives words near the cursor position a higher score than those far away.
@@ -136,5 +126,9 @@ declare module "atom" {
      * determine they are similar.
      */
     "autocomplete-plus.similarSuggestionRemoval": "none" | "textOrSnippet";
+
+    "autocomplete-plus.firstCharacterMustMatch": boolean;
+    "autocomplete-plus.extraWordCharacters": string;
+    "autocomplete-plus.moveToCancel": boolean;
   }
 }

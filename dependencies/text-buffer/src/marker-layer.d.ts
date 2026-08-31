@@ -11,7 +11,7 @@ export interface MarkerLayer {
   copy(): MarkerLayer;
 
   /** Destroy this layer. */
-  destroy(): boolean;
+  destroy(): void;
 
   /** Remove all markers from this layer. */
   clear(): void;

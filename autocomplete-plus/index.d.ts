@@ -3,7 +3,7 @@
 
 /// <reference path="./config.d.ts" />
 
-import { Point, ScopeDescriptor, TextEditor } from "../index";
+import { Point, RangeCompatible, ScopeDescriptor, TextEdit, TextEditor } from "../index";
 
 /** The parameters passed into getSuggestions by Autocomplete+. */
 export interface SuggestionsRequestedEvent {
@@ -90,7 +90,7 @@ export interface SuggestionBase {
    *
    * e.g. `iconHTML: '<i class="icon-move-right"></i>'`
    */
-  iconHTML?: string;
+  iconHTML?: string | false;
 
   /**
    * A doc-string summary or short description of the suggestion.
@@ -113,6 +113,13 @@ export interface SuggestionBase {
    * Takes precedence over plaintext description.
    */
   descriptionMarkdown?: string;
+
+  // v5 LSP fields
+
+  textEdit?: TextEdit;
+  additionalTextEdits?: TextEdit[];
+  ranges?: RangeCompatible[];
+  characterMatchIndices?: number[];
 }
 
 export interface TextSuggestion extends SuggestionBase {
@@ -138,13 +145,13 @@ export interface AutocompleteProvider {
    * Defines the scope selector(s) (can be comma-separated) for which your
    * provider should receive suggestion requests.
    */
-  selector: string;
+  scopeSelector: string;
 
   /**
    * Defines the scope selector(s) (can be comma-separated) for which your
    * provider should not be used.
    */
-  disableForSelector?: string;
+  disableForScopeSelector?: string;
 
   /**
    * A number to indicate its priority to be included in a suggestions request.
@@ -197,4 +204,6 @@ export interface AutocompleteProvider {
 
   /** Called if your provider is being destroyed by Autocomplete+. */
   dispose?(): void;
+
+  labels?: string[];
 }

@@ -12,6 +12,10 @@ export interface ConfigValues {
   // NOTE: this is intentionally left empty, extended via ambient declarations
 }
 
+export type KnownKeys<T> = keyof {
+  [K in keyof T as string extends K ? never : number extends K ? never : K]: T[K]
+};
+
 // NOTE: A hack to make ConfigValues extensible.
 declare module "atom" {
   interface ConfigValues {
@@ -136,14 +140,12 @@ declare module "atom" {
      */
     "core.colorProfile": "default" | "srgb";
 
+    // These don't show up in GUI settings but are commonly defined by
+    // grammars.
     "editor.commentStart": string | null;
-
     "editor.commentEnd": string | null;
-
     "editor.increaseIndentPattern": string | null;
-
     "editor.decreaseIndentPattern": string | null;
-
     "editor.foldEndPattern": string | null;
 
     /** The name of the font family used for editor text. */

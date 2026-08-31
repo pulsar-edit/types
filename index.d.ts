@@ -4,6 +4,14 @@
 
 /// <reference types="node" />
 
+// Config keys for the packages Pulsar bundles. These are `declare module
+// "atom"` augmentations of `ConfigValues`; referencing them here means a
+// consumer gets them just by importing `atom`, the same way they get
+// `core.*` and `editor.*`. Community packages' config keys stay opt-in —
+// import `atom/linter`, `atom/tool-bar`, etc. to pull those in.
+/// <reference path="./autocomplete-plus/config.d.ts" />
+/// <reference path="./status-bar/config.d.ts" />
+
 import { AtomEnvironment } from "./src/atom-environment";
 import { TextEditorElement } from "./src/text-editor-element";
 
@@ -66,7 +74,15 @@ export * from "./src/tooltip";
 export * from "./src/tooltip-manager";
 export * from "./src/view-registry";
 export * from "./src/ui";
-export { WASMTreeSitterGrammar } from './src/wasm-tree-sitter-grammar';
-export { WASMTreeSitterLanguageMode } from './src/wasm-tree-sitter-language-mode';
+export {
+  CommentDelimiterSpec,
+  InjectionPoint,
+  WASMTreeSitterGrammar,
+  WASMTreeSitterGrammarParams
+} from './src/wasm-tree-sitter-grammar';
+export {
+  TransactionMetadata,
+  WASMTreeSitterLanguageMode
+} from './src/wasm-tree-sitter-language-mode';
 export * from "./src/workspace";
 export * from "./src/workspace-center";

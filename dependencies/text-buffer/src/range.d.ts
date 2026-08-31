@@ -16,6 +16,31 @@ export class Range {
   /** Construct a Range object. */
   constructor(pointA?: PointCompatible, pointB?: PointCompatible);
 
+  /**
+   * Build a range from the given text, starting at `(0, 0)` and ending where
+   * the text leaves off.
+   */
+  static fromText(text: string): Range;
+
+  /** Build a range from the given text, starting at the given point. */
+  static fromText(startPoint: PointCompatible, text: string): Range;
+
+  /**
+   * Build a range that starts at the given point and ends the given number of
+   * rows and columns later.
+   */
+  static fromPointWithDelta(
+    startPoint: PointCompatible,
+    rowDelta: number,
+    columnDelta: number,
+  ): Range;
+
+  /**
+   * Build a range that starts at the given point and ends where traversing the
+   * given extent from that point lands.
+   */
+  static fromPointWithTraversalExtent(startPoint: PointCompatible, extent: PointCompatible): Range;
+
   /** Call this with the result of Range::serialize to construct a new Range. */
   static deserialize(array: object): Range;
 
@@ -27,7 +52,7 @@ export class Range {
 
   // Serialization and Deserialization
   /** Returns a plain javascript object representation of the Range. */
-  serialize(): number[][];
+  serialize(): [[number, number], [number, number]];
 
   // Range Details
   /** Is the start position of this range equal to the end position? */
@@ -44,6 +69,12 @@ export class Range {
 
   /** Returns an array of all rows in the range. */
   getRows(): number[];
+
+  /**
+   * Returns a Point representing the distance from this range's start to its
+   * end — the result of traversing from one to the other.
+   */
+  getExtent(): Point;
 
   // Operations
   /**
@@ -116,22 +147,33 @@ export class Range {
   intersectsRowRange(startRow: number, endRow: number): boolean;
 
   // Conversion
+  /**
+   * Returns a Point representing this range's extent as a delta: the row
+   * difference, and either the column difference (for a single-line range) or
+   * the end column.
+   */
+  toDelta(): Point;
+
   /** Returns a string representation of the range. */
   toString(): string;
 }
 
 /**
- * The types usable when constructing a range via the {@link Range#fromObject}
- * method.
+ * “Loose” ranges — the types usable when constructing a range via the
+ * {@link Range#fromObject} method.
  */
 export type RangeCompatible =
-  | RangeLike
-  | [PointLike, PointLike]
-  | [PointLike, [number, number]]
-  | [[number, number], PointLike]
-  | [[number, number], [number, number]];
+  | { start: PointCompatible; end: PointCompatible }
+  | [PointCompatible, PointCompatible];
 
-/** The interface that should be implemented for all "range-compatible" objects. */
+/**
+ * The interface that should be implemented for all "range-compatible" objects.
+ *
+ * Unlike {@link RangeCompatible}, this describes a “duck-typed” range: its ends
+ * are read directly rather than coerced, so they must already be
+ * {@link PointLike}. Methods like {@link Range#coversSameRows} read `.row` off
+ * each end and would silently misbehave given a `[row, column]` tuple.
+ */
 export interface RangeLike {
   /** A Point representing the start of the Range. */
   start: PointLike;
