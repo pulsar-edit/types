@@ -51,6 +51,19 @@ const ALLOWED = {
   "src/other-types.d.ts": ["Document"],
 };
 
+// This check reads the program through the TypeScript compiler API, which the
+// 7.x package (the native port) no longer exposes to JS callers — `ts.sys` and
+// `ts.createProgram` are simply absent there. What the check looks for does not
+// vary by compiler version, so skipping is correct rather than a failure: the
+// pinned 5.x jobs in CI still run it for real, as does local development.
+if (typeof ts.createProgram !== "function" || !ts.sys) {
+  const version = ts.version || "unknown";
+  console.log(
+    `dom-shadow: skipped — the compiler API is unavailable in typescript@${version}.`
+  );
+  process.exit(0);
+}
+
 const root = path.resolve(__dirname, "..");
 const configPath = path.join(root, "tsconfig.json");
 

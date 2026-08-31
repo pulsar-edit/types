@@ -4,6 +4,13 @@
 
 /// <reference types="node" />
 
+// `web-tree-sitter`'s declarations name `EmscriptenModule` without importing
+// it, so it has to be in scope globally. TypeScript 5 pulls it in on its own
+// by auto-including everything under `node_modules/@types`; TypeScript 7 does
+// not, and `test:types` runs with `skipLibCheck: false`, so the reference has
+// to be explicit. `@types/emscripten` is already a direct dependency.
+/// <reference types="emscripten" />
+
 // Config keys for the packages Pulsar bundles. These are `declare module
 // "atom"` augmentations of `ConfigValues`; referencing them here means a
 // consumer gets them just by importing `atom`, the same way they get
