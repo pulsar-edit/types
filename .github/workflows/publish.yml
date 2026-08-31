@@ -19,6 +19,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - run: npm ci
       - run: npm test
+      - run: npm run test:attw
 
   publish:
     needs: build

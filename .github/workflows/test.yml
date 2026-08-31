@@ -1,0 +1,83 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# A newer push to the same branch makes an in-flight run redundant.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 20
+
+jobs:
+  # Declarations are only as good as the compilers that read them, and a
+  # `.d.ts` can compile cleanly on one TypeScript version and not another.
+  # `peerDependencies.typescript` claims `>= 5.1`, so 5.1 is the floor this
+  # job exists to defend.
+  #
+  # 5.6 and 5.7 straddle the `typesVersions` redirect in `@types/node`, which
+  # is the one place a minor bump has bitten this package before.
+  test:
+    name: TypeScript ${{ matrix.typescript }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        typescript: ["5.1", "5.6", "5.7", "5.8"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - name: Pin TypeScript
+        run: npm install --no-save typescript@${{ matrix.typescript }}
+      - name: Report resolved version
+        run: npx tsc --version
+      - run: npm test
+
+  # TypeScript 7 is the native port, and `typescript@latest` now resolves to
+  # it. It is not yet a supported target for this package, so a failure here
+  # is a heads-up rather than a build break — read the log, don't block the
+  # PR. Promote these into the matrix above once 7.x passes reliably.
+  future:
+    name: TypeScript ${{ matrix.typescript }} (advisory)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        typescript: ["latest", "next"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - name: Pin TypeScript
+        run: npm install --no-save typescript@${{ matrix.typescript }}
+      - name: Report resolved version
+        run: npx tsc --version
+      - run: npm test
+
+  # Packaging correctness: entry points, export maps, and whether a consumer
+  # resolving `atom` actually lands on these declarations. Runs once rather
+  # than per-matrix-entry — it does not depend on the TypeScript version.
+  package:
+    name: Package metadata
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npm run test:attw

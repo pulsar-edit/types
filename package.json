@@ -43,7 +43,11 @@
     "url": "https://github.com/pulsar-edit/types.git"
   },
   "scripts": {
-    "test": "tsc --noEmit index.d.ts"
+    "test": "npm run test:types && npm run test:usage && npm run test:dom-shadow",
+    "test:types": "tsc -p tsconfig.json",
+    "test:usage": "tsc -p test",
+    "test:dom-shadow": "node scripts/dom-shadow.js",
+    "test:attw": "attw --pack ."
   },
   "dependencies": {
     "@types/emscripten": "^1.40.1",

@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "target": "es2020",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "lib": ["es2020", "dom"],
+    // Mirror the consumer setup documented in the README: packages alias
+    // `atom` to this package. The `declare module "atom"` blocks that populate
+    // `ConfigValues` only merge when the specifier resolves this way, so tests
+    // that exercise config typing must import from `atom` rather than by path.
+    "paths": {
+      "atom": ["../index.d.ts"],
+      "atom/*": ["../*"]
+    }
+  },
+  "include": ["**/*.ts"]
+}
