@@ -810,7 +810,7 @@ export interface Pane {
   saveItemAs<T = void>(item: PaneItem, nextAction?: (error?: Error) => T): Promise<T | undefined>;
 
   /** Save all items. */
-  saveItems(): void;
+  saveItems(): Promise<void>;
 
   /** Return the first item that matches the given URI or undefined if none exists. */
   itemForURI(uri: string): PaneItem | undefined;
