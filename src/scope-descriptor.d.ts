@@ -5,4 +5,10 @@
 export interface ScopeDescriptor {
   /** Returns all scopes for this descriptor. */
   getScopesArray(): readonly string[];
+
+  /**
+   * Returns all scopes for this descriptor, but space-separated in the style
+   * of a CSS selector.
+   */
+  getScopeChain(): string;
 }

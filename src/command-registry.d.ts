@@ -1,8 +1,40 @@
 import { CommandEvent, CompositeDisposable, Disposable } from "../index";
 
+/**
+ * @deprecated Retained for backward compatibility. The index signature that
+ * allowed arbitrary selectors to satisfy `keyof CommandRegistryTargetMap` made
+ * overload resolution fail whenever a target's type was a union (like
+ * `string | HTMLElement`), because TypeScript matches an argument against each
+ * overload as a whole rather than distributing the union across them. Use
+ * {@link CommandTarget} instead.
+ */
 export interface CommandRegistryTargetMap extends HTMLElementTagNameMap {
   [key: string]: EventTarget;
 }
+
+/**
+ * Resolves a command target to the type of element that its command events
+ * will carry as `currentTarget`.
+ *
+ * A specific node keeps its own type; a string that matches a known tag name
+ * maps to that tag's element type; anything else — a compound or otherwise
+ * complex selector, a plain `string`, or a union of target types — falls back
+ * to `EventTarget`, which is vague but true.
+ *
+ * Because this is a conditional type rather than a set of overloads, it
+ * distributes over unions; a target typed `string | HTMLElement` resolves to
+ * `EventTarget` instead of failing to match any signature at all.
+ *
+ * TODO: We can improve the accuracy of the inference here if we use
+ * template-literal types, as long as we're careful not to over-infer on
+ * selectors like `atom-text-editor, div` so that we don't make things worse
+ * relative to the status quo. (Also requires TS 4.8, but that should be safe
+ * to rely on.) That work would happen here, as extra branches, rather than as
+ * extra overloads on `add`.
+ */
+export type CommandTarget<T> = T extends EventTarget ? T
+  : T extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[T]
+  : EventTarget;
 
 /**
  * Commands can be bound to specific targets (element nodes that already exist)
@@ -64,38 +96,24 @@ export interface CommandRegistry {
   // When `target` is a string and happens to match a known tag name, we can
   // infer the type of `currentTarget` on the event listener. When it's a more
   // complex selector (or a tag we don't recognize) it falls back to inferring
-  // that `currentTarget` is an `EventTarget` (which is true, if vague).
+  // that `currentTarget` is an `EventTarget` (which is true, if vague). See
+  // `CommandTarget` for the details.
   //
-  // TODO: We can improve the accuracy of the inference here if we use
-  // template-literal types, as long as we're careful not to over-infer on
-  // selectors like `atom-text-editor, div` so that we don't make things worse
-  // relative to the status quo. (Also requires TS 4.8, but that should be safe
-  // to rely on.)
-  add<T extends keyof CommandRegistryTargetMap>(
+  // These two signatures are distinguished by their _second_ argument, never
+  // by the type of `target`; that's what allows a caller to pass a target
+  // whose type is a union.
+  add<T extends string | Node>(
     target: T,
     commandName: string,
-    listener: CommandRegistryListener<CommandRegistryTargetMap[T]>,
-    throwOnInvalidSelector?: boolean
-  ): Disposable;
-  add<T extends Node>(
-    target: T,
-    commandName: string,
-    listener: CommandRegistryListener<T>,
+    listener: CommandRegistryListener<CommandTarget<T>>,
     throwOnInvalidSelector?: boolean
   ): Disposable;
 
   /** Register multiple commands. */
-  add<T extends keyof CommandRegistryTargetMap>(
+  add<T extends string | Node>(
     target: T,
     commands: {
-      [key: string]: CommandRegistryListener<CommandRegistryTargetMap[T]>;
-    },
-    throwOnInvalidSelector?: boolean
-  ): CompositeDisposable;
-  add<T extends Node>(
-    target: T,
-    commands: {
-      [key: string]: CommandRegistryListener<T>;
+      [key: string]: CommandRegistryListener<CommandTarget<T>>;
     },
     throwOnInvalidSelector?: boolean
   ): CompositeDisposable;
@@ -111,7 +129,7 @@ export interface CommandRegistry {
   }>;
 
   /**
-   *  Simulate the dispatch of a command on a DOM node.
+   * Simulate the dispatch of a command on a DOM node.
    *
    * @return Either a promise that resolves after all handlers complete or
    * `null` if no handlers were matched.

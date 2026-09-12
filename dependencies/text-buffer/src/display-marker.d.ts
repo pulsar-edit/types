@@ -1,12 +1,22 @@
 import { Disposable } from "../../../index";
 import {
+  ClipDirectionOptions,
   CopyMarkerOptions,
+  CustomMarkerProperties,
   FindDisplayMarkerOptions,
+  MarkerOptions,
+  MarkerPositionOptions,
   Point,
   PointCompatible,
   Range,
   RangeCompatible,
 } from "./text-buffer";
+
+export interface DisplayMarkerPositionOptions extends MarkerPositionOptions, ClipDirectionOptions {
+}
+
+export interface DisplayMarkerOptions extends MarkerOptions, ClipDirectionOptions {
+}
 
 /**
  * Represents a buffer annotation that remains logically stationary even as the
@@ -76,7 +86,7 @@ export interface DisplayMarker {
    *
    * @return Whether the action changed anything about the marker.
    */
-  setProperties(properties: object): boolean;
+  setProperties(properties: CustomMarkerProperties): boolean;
 
   /** Returns whether this marker matches the given parameters. */
   matchesProperties(attributes: FindDisplayMarkerOptions): boolean;
@@ -101,11 +111,13 @@ export interface DisplayMarker {
   /**
    * Modifies the buffer range of this marker.
    *
+   * Accepts all mutable
+   *
    * @return Whether the action changed anything about the marker.
    */
   setBufferRange(
     bufferRange: RangeCompatible,
-    properties?: { reversed?: boolean, exclusive?: boolean }
+    properties?: Omit<MarkerOptions, 'invalidate'>,
   ): boolean;
 
   /**
@@ -115,28 +127,20 @@ export interface DisplayMarker {
    */
   setScreenRange(
     screenRange: RangeCompatible,
-    options?: {
-      reversed?: boolean;
-      exclusive?: boolean;
-      clipDirection?: "backward" | "forward" | "closest" | undefined
-    },
+    options?: Omit<DisplayMarkerOptions, 'invalidate'>,
   ): boolean;
 
   /**
    * Retrieves the screen position of the marker's start. This will always be
    * less than or equal to the result of DisplayMarker::getEndScreenPosition.
    */
-  getStartScreenPosition(options?: {
-    clipDirection?: "backward" | "forward" | "closest"
-  }): Point;
+  getStartScreenPosition(options?: Pick<DisplayMarkerOptions, 'clipDirection'>): Point;
 
   /**
    * Retrieves the screen position of the marker's end. This will always be
    * greater than or equal to the result of {@link getStartScreenPosition}.
    */
-  getEndScreenPosition(options?: {
-    clipDirection?: "backward" | "forward" | "closest"
-  }): Point;
+  getEndScreenPosition(options?: Pick<DisplayMarkerOptions, 'clipDirection'>): Point;
 
   /** Retrieves the buffer position of the marker's head. */
   getHeadBufferPosition(): Point;
@@ -149,9 +153,7 @@ export interface DisplayMarker {
   setHeadBufferPosition(bufferPosition: PointCompatible): boolean;
 
   /** Retrieves the screen position of the marker's head. */
-  getHeadScreenPosition(options?: {
-    clipDirection?: "backward" | "forward" | "closest"
-  }): Point;
+  getHeadScreenPosition(options?: Pick<DisplayMarkerOptions, 'clipDirection'>): Point;
 
   /**
    * Sets the screen position of the marker's head.
@@ -160,7 +162,7 @@ export interface DisplayMarker {
    */
   setHeadScreenPosition(
     screenPosition: PointCompatible,
-    options?: { clipDirection?: "backward" | "forward" | "closest" },
+    options?: ClipDirectionOptions,
   ): boolean;
 
   /** Retrieves the buffer position of the marker's tail. */
@@ -174,9 +176,7 @@ export interface DisplayMarker {
   setTailBufferPosition(bufferPosition: PointCompatible): boolean;
 
   /** Retrieves the screen position of the marker's tail. */
-  getTailScreenPosition(options?: {
-    clipDirection?: "backward" | "forward" | "closest"
-  }): Point;
+  getTailScreenPosition(options?: ClipDirectionOptions): Point;
 
   /**
    * Sets the screen position of the marker's tail.
@@ -185,7 +185,7 @@ export interface DisplayMarker {
    */
   setTailScreenPosition(
     screenPosition: PointCompatible,
-    options?: { clipDirection?: "backward" | "forward" | "closest" },
+    options?: Pick<DisplayMarkerOptions, 'clipDirection'>
   ): boolean;
 
   /**

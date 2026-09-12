@@ -103,8 +103,38 @@ layer.findMarkers({
   intersectsScreenRange: [[0, 0], [1, 0]],
 }) satisfies DisplayMarker[];
 
+// Marker state can be queried here too; these names pass through to the
+// buffer layer unrenamed.
+layer.findMarkers({
+  valid: true,
+  reversed: false,
+  tailed: true,
+  invalidate: "surround",
+}) satisfies DisplayMarker[];
+
+// An unrecognized property is a custom-property query, exactly as at the
+// buffer layer. `FindDisplayMarkerOptions` gets this by inheriting the index
+// signature on `FindMarkerBaseOptions`.
+layer.findMarkers({ myPackageRole: "highlight" }) satisfies DisplayMarker[];
+
+// Buffer-level filter names are reserved: they would reach
+// `Marker::matchesParam` untranslated and be read as buffer-coordinate
+// queries, so they cannot be used as custom properties here.
+
 // @ts-expect-error the buffer-layer filter names do not apply here
 layer.findMarkers({ startPosition: [0, 0] });
+
+// Reserved even though they have no display-layer analog to be renamed to —
+// these two queries simply cannot be expressed at this layer.
+// @ts-expect-error reserved buffer-level name
+layer.findMarkers({ intersectsRow: 2 });
+
+// @ts-expect-error reserved buffer-level name
+layer.findMarkers({ containsPoint: [0, 2] });
+
+// The index signature must not erase checking on the declared filters.
+// @ts-expect-error a buffer row is a number
+layer.findMarkers({ startBufferRow: "3" });
 
 // ---------------------------------------------------------------------------
 // Events

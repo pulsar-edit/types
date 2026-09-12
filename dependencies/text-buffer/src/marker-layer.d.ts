@@ -1,5 +1,11 @@
 import { Disposable } from "../../../index";
-import { Marker, PointCompatible, RangeCompatible } from "./text-buffer";
+import { Marker, MarkerOptions, PointCompatible, RangeCompatible } from "./text-buffer";
+
+export interface MarkerLayerOptions {
+  maintainHistory?: boolean | undefined;
+  persistent?: boolean | undefined;
+  role?: string | undefined;
+}
 
 /** Experimental: A container for a related set of markers. */
 export interface MarkerLayer {
@@ -39,20 +45,13 @@ export interface MarkerLayer {
   /** Create a marker with the given range. */
   markRange(
     range: RangeCompatible,
-    options?: {
-      reversed?: boolean | undefined;
-      invalidate?: "never" | "surround" | "overlap" | "inside" | "touch" | undefined;
-      exclusive?: boolean | undefined;
-    },
+    options?: MarkerOptions,
   ): Marker;
 
   /** Create a marker at with its head at the given position with no tail. */
   markPosition(
     position: PointCompatible,
-    options?: {
-      invalidate?: "never" | "surround" | "overlap" | "inside" | "touch" | undefined;
-      exclusive?: boolean | undefined;
-    },
+    options?: Omit<MarkerOptions, 'reversed'>,
   ): Marker;
 
   // Event Subscription
@@ -72,7 +71,31 @@ export interface MarkerLayer {
   onDidDestroy(callback: () => void): Disposable;
 }
 
-export interface FindMarkerOptions {
+export interface CustomMarkerProperties {
+  /**
+   * Any unrecognized property is interpreted as a custom marker property, and
+   * will be added as another match criterion.
+   */
+  [key: string]: unknown;
+}
+
+export interface FindMarkerBaseOptions extends CustomMarkerProperties {
+  /** Only include valid markers. */
+  valid?: boolean | undefined;
+
+  /** Only include reversed markers. */
+  reversed?: boolean | undefined;
+
+  /** Only include tailed markers. */
+  tailed?: boolean | undefined;
+
+  /**
+   * Only include markers whose `invalidate` setting matches the given value.
+   */
+  invalidate?: MarkerOptions['invalidate'] | undefined;
+}
+
+export interface FindMarkerPositionalOptions {
   /** Only include markers that start at the given Point. */
   startPosition?: PointCompatible | undefined;
 
@@ -86,8 +109,14 @@ export interface FindMarkerOptions {
   endsInRange?: RangeCompatible | undefined;
 
   /** Only include markers that contain the given Point, inclusive. */
-  containsPoint?: PointCompatible | undefined;
   containsPosition?: PointCompatible | undefined;
+
+  /**
+   * Only include markers that contain the given Point, inclusive.
+   *
+   * Alias of {@link containsPosition}.
+   */
+  containsPoint?: PointCompatible | undefined;
 
   /** Only include markers that contain the given {@link Range}, inclusive. */
   containsRange?: RangeCompatible | undefined;
@@ -114,4 +143,8 @@ export interface FindMarkerOptions {
    * Only include markers that are completely contained by the specified range.
    */
   containedInRange?: RangeCompatible | undefined;
+
+}
+
+export interface FindMarkerOptions extends FindMarkerBaseOptions, FindMarkerPositionalOptions {
 }

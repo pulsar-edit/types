@@ -1,6 +1,15 @@
 import { Disposable } from "../../../index";
 import { Point, PointCompatible, Range, RangeCompatible } from "./text-buffer";
 
+export interface MarkerPositionOptions {
+  invalidate?: "never" | "surround" | "overlap" | "inside" | "touch" | undefined;
+  exclusive?: boolean | undefined;
+}
+
+export interface MarkerOptions extends MarkerPositionOptions {
+  reversed?: boolean | undefined;
+}
+
 /**
  * Represents a buffer annotation that remains logically stationary even as the
  * buffer changes.
@@ -82,7 +91,7 @@ export interface Marker {
    */
   setRange(
     range: RangeCompatible,
-    params?: { reversed?: boolean | undefined; exclusive?: boolean | undefined },
+    params?: Omit<MarkerOptions, 'invalidate'>,
   ): boolean;
 
   /**

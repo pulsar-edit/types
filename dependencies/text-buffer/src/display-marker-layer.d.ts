@@ -1,6 +1,10 @@
 import { Disposable } from "../../../index";
 import {
   DisplayMarker,
+  DisplayMarkerOptions,
+  FindMarkerBaseOptions,
+  FindMarkerPositionalOptions,
+  MarkerOptions,
   PointCompatible,
   RangeCompatible
 } from "./text-buffer";
@@ -48,12 +52,7 @@ export interface DisplayMarkerLayer {
   /** Create a marker with the given screen range. */
   markScreenRange(
     range: RangeCompatible,
-    options?: {
-      reversed?: boolean | undefined;
-      invalidate?: "never" | "surround" | "overlap" | "inside" | "touch" | undefined;
-      exclusive?: boolean | undefined;
-      clipDirection?: "backward" | "forward" | "closest" | undefined;
-    },
+    options?: DisplayMarkerOptions,
   ): DisplayMarker;
 
   /**
@@ -62,21 +61,13 @@ export interface DisplayMarkerLayer {
    */
   markScreenPosition(
     screenPosition: PointCompatible,
-    options?: {
-      invalidate?: "never" | "surround" | "overlap" | "inside" | "touch" | undefined;
-      exclusive?: boolean | undefined;
-      clipDirection?: "backward" | "forward" | "closest" | undefined;
-    },
+    options?: Omit<DisplayMarkerOptions, 'reversed'>,
   ): DisplayMarker;
 
   /** Create a marker with the given buffer range. */
   markBufferRange(
     range: RangeCompatible,
-    options?: {
-      reversed?: boolean | undefined;
-      invalidate?: "never" | "surround" | "overlap" | "inside" | "touch" | undefined;
-      exclusive?: boolean | undefined;
-    },
+    options?: MarkerOptions,
   ): DisplayMarker;
 
   /**
@@ -85,10 +76,7 @@ export interface DisplayMarkerLayer {
    */
   markBufferPosition(
     bufferPosition: PointCompatible,
-    options?: {
-      invalidate?: "never" | "surround" | "overlap" | "inside" | "touch" | undefined;
-      exclusive?: boolean | undefined;
-    },
+    options?: Omit<MarkerOptions, 'reversed'>,
   ): DisplayMarker;
 
   // Querying
@@ -112,7 +100,22 @@ export interface DisplayMarkerLayer {
   findMarkers(properties: FindDisplayMarkerOptions): DisplayMarker[];
 }
 
-export interface FindDisplayMarkerOptions {
+/**
+ * Options that should be explicitly marked as invalid in
+ * {@link FindDisplayMarkerOptions}.
+ *
+ * `DisplayMarker`s and `Marker`s are very similar. It's easy to lose track of
+ * the differences and consult `FindMarkerOptions` instead of
+ * `FindDisplayMarkerOptions`. But any arbitrary key/value pair is allowed in
+ * `findMarkers` and falls back to interpretation as custom marker metadata, so
+ * we need this mechanism to help users catch violations of their expressed
+ * intent.
+ */
+type ReservedBufferFindOptions = {
+  [K in keyof FindMarkerPositionalOptions]?: never
+}
+
+export interface FindDisplayMarkerOptions extends FindMarkerBaseOptions, ReservedBufferFindOptions {
   /** Only include markers starting at this Point in buffer coordinates. */
   startBufferPosition?: PointCompatible | undefined;
 

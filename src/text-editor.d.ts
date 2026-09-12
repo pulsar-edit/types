@@ -1,6 +1,7 @@
 import {
   BufferScanResult,
   BufferStoppedChangingEvent,
+  ClipDirectionOptions,
   ContextualBufferScanResult,
   Cursor,
   CursorPositionChangedEvent,
@@ -9,6 +10,8 @@ import {
   DecorationOptions,
   DisplayMarker,
   DisplayMarkerLayer,
+  DisplayMarkerOptions,
+  DisplayMarkerPositionOptions,
   Disposable,
   EditorChangedEvent,
   FindDisplayMarkerOptions,
@@ -17,6 +20,9 @@ import {
   GutterOptions,
   LayerDecoration,
   MarkerLayer,
+  MarkerLayerOptions,
+  MarkerOptions,
+  MarkerPositionOptions,
   Point,
   PointCompatible,
   Range,
@@ -27,6 +33,7 @@ import {
   ScopeDescriptor,
   Selection,
   SelectionChangedEvent,
+  SetBufferRangeOptions,
   TextBuffer,
   TextEditOptions,
   TextEditorElement,
@@ -475,13 +482,13 @@ export class TextEditor {
   /** Convert a position in buffer-coordinates to screen-coordinates. */
   screenPositionForBufferPosition(
     bufferPosition: PointCompatible,
-    options?: { clipDirection?: "backward" | "forward" | "closest" | undefined },
+    options?: ClipDirectionOptions,
   ): Point;
 
   /** Convert a position in screen-coordinates to buffer-coordinates. */
   bufferPositionForScreenPosition(
     bufferPosition: PointCompatible,
-    options?: { clipDirection?: "backward" | "forward" | "closest" | undefined },
+    options?: ClipDirectionOptions,
   ): Point;
 
   /** Convert a range in buffer-coordinates to screen-coordinates. */
@@ -502,7 +509,7 @@ export class TextEditor {
   /** Clip the given Point to a valid position on screen. */
   clipScreenPosition(
     screenPosition: PointCompatible,
-    options?: { clipDirection?: "backward" | "forward" | "closest" | undefined },
+    options?: ClipDirectionOptions,
   ): Point;
 
   /**
@@ -511,7 +518,7 @@ export class TextEditor {
    */
   clipScreenRange(
     range: RangeCompatible,
-    options?: { clipDirection?: "backward" | "forward" | "closest" | undefined },
+    options?: ClipDirectionOptions,
   ): Range;
 
   // Decorations
@@ -558,11 +565,7 @@ export class TextEditor {
    */
   markBufferRange(
     range: RangeCompatible,
-    properties?: {
-      maintainHistory?: boolean | undefined;
-      reversed?: boolean | undefined;
-      invalidate?: "never" | "surround" | "overlap" | "inside" | "touch" | undefined;
-    },
+    properties?: MarkerOptions,
   ): DisplayMarker;
 
   /**
@@ -575,11 +578,7 @@ export class TextEditor {
    */
   markScreenRange(
     range: RangeCompatible,
-    properties?: {
-      maintainHistory?: boolean | undefined;
-      reversed?: boolean | undefined;
-      invalidate?: "never" | "surround" | "overlap" | "inside" | "touch" | undefined;
-    },
+    properties?: DisplayMarkerOptions,
   ): DisplayMarker;
 
   /**
@@ -589,9 +588,7 @@ export class TextEditor {
    */
   markBufferPosition(
     bufferPosition: PointCompatible,
-    options?: {
-      invalidate?: "never" | "surround" | "overlap" | "inside" | "touch" | undefined;
-    },
+    options?: MarkerPositionOptions,
   ): DisplayMarker;
 
   /**
@@ -601,10 +598,7 @@ export class TextEditor {
    */
   markScreenPosition(
     screenPosition: PointCompatible,
-    options?: {
-      invalidate?: "never" | "surround" | "overlap" | "inside" | "touch" | undefined;
-      clipDirection?: "backward" | "forward" | "closest" | undefined;
-    },
+    options?: DisplayMarkerPositionOptions,
   ): DisplayMarker;
 
   /**
@@ -619,9 +613,7 @@ export class TextEditor {
   findMarkers(properties: FindDisplayMarkerOptions): DisplayMarker[];
 
   /** Create a marker layer to group related markers. */
-  addMarkerLayer(
-    options?: { maintainHistory?: boolean | undefined; persistent?: boolean | undefined },
-  ): DisplayMarkerLayer;
+  addMarkerLayer(options?: MarkerLayerOptions): DisplayMarkerLayer;
 
   /** Get a {@link DisplayMarkerLayer | `DisplayMarkerLayer`} by ID. */
   getMarkerLayer(id: string): DisplayMarkerLayer | undefined;
@@ -806,7 +798,7 @@ export class TextEditor {
    */
   setSelectedBufferRange(
     bufferRange: RangeCompatible,
-    options?: { reversed?: boolean | undefined; preserveFolds?: boolean | undefined },
+    options?: SetBufferRangeOptions,
   ): void;
 
   /**
@@ -815,7 +807,7 @@ export class TextEditor {
    */
   setSelectedBufferRanges(
     bufferRanges: readonly RangeCompatible[],
-    options?: { reversed?: boolean | undefined; preserveFolds?: boolean | undefined },
+    options?: SetBufferRangeOptions,
   ): void;
 
   /**
@@ -854,13 +846,13 @@ export class TextEditor {
   /** Add a selection for the given range in buffer coordinates. */
   addSelectionForBufferRange(
     bufferRange: RangeCompatible,
-    options?: { reversed?: boolean | undefined; preserveFolds?: boolean | undefined },
+    options?: SetBufferRangeOptions,
   ): Selection;
 
   /** Add a selection for the given range in screen coordinates. */
   addSelectionForScreenRange(
     screenRange: RangeCompatible,
-    options?: { reversed?: boolean | undefined; preserveFolds?: boolean | undefined },
+    options?: SetBufferRangeOptions,
   ): Selection;
 
   /**

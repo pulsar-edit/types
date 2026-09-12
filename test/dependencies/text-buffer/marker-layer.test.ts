@@ -72,8 +72,25 @@ layer.findMarkers({
 // @ts-expect-error a row range is a pair of rows
 layer.findMarkers({ intersectsRowRange: [0, 4, 8] });
 
-// @ts-expect-error unknown filter
+// Legal; any unrecognized property is passed along for custom-property
+// matching.
 layer.findMarkers({ startsInRow: 0 });
+
+// The marker's own state can be queried. These names are handled by
+// `Marker::matchesParam` and mean the same thing at either layer.
+layer.findMarkers({
+  valid: true,
+  reversed: false,
+  tailed: true,
+  invalidate: "surround",
+}) satisfies Marker[];
+
+// The display layer's filter names are NOT reserved here. This layer has no
+// translation step, so they miss `Marker::matchesParam` entirely and become
+// ordinary custom-property queries — the mirror image of the buffer-level
+// names being reserved on `FindDisplayMarkerOptions`.
+layer.findMarkers({ startBufferPosition: [0, 0] }) satisfies Marker[];
+layer.findMarkers({ startScreenRow: 0 }) satisfies Marker[];
 
 // ---------------------------------------------------------------------------
 // Marker creation

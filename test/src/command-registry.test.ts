@@ -32,8 +32,8 @@ atom.commands.add("div", "my-package:run", (event) => {
   event.currentTarget satisfies HTMLDivElement;
 }) satisfies Disposable;
 
-// An arbitrary selector is still a key of the target map, by way of its index
-// signature — so the target is only known to be an `EventTarget`.
+// An arbitrary selector matches no known tag name, so `CommandTarget` falls
+// through to its default and the target is only known to be an `EventTarget`.
 atom.commands.add(".my-package-panel", "my-package:run", (event) => {
   event.currentTarget satisfies EventTarget;
 });
@@ -138,6 +138,69 @@ atom.commands.add(element, {
 atom.commands.add(".my-package-panel", {
   "my-package:run": (event) => event.currentTarget satisfies EventTarget,
 }) satisfies CompositeDisposable;
+
+// ---------------------------------------------------------------------------
+// Union targets
+// ---------------------------------------------------------------------------
+
+// A caller that accepts either a selector or an element — a common shape for a
+// package's own `registerCommand` helper — can pass the target straight
+// through. `add` must not be overloaded on the _type_ of `target`, or nothing
+// here resolves: TypeScript matches an argument against each overload whole
+// rather than distributing the union across them, so a `string | HTMLElement`
+// would satisfy neither a string-shaped nor a node-shaped signature.
+declare const unionTarget: string | HTMLElement;
+declare const commandName: string;
+
+atom.commands.add(unionTarget, commandName, (event) => {
+  event.currentTarget satisfies EventTarget;
+}) satisfies Disposable;
+
+atom.commands.add(unionTarget, {
+  [commandName]: (event) => event.currentTarget satisfies EventTarget,
+}) satisfies CompositeDisposable;
+
+atom.commands.add(unionTarget, {
+  [commandName]: { didDispatch: (event) => event.currentTarget satisfies EventTarget },
+}) satisfies CompositeDisposable;
+
+// A union of two element types resolves to the union, not to `EventTarget`.
+declare const elementUnion: HTMLDivElement | HTMLInputElement;
+atom.commands.add(elementUnion, "my-package:run", (event) => {
+  event.currentTarget satisfies HTMLDivElement | HTMLInputElement;
+});
+
+// Asserted against `HTMLInputElement` rather than `HTMLDivElement`: the latter
+// adds only the deprecated `align` to `HTMLElement`, which `HTMLInputElement`
+// also has, so a div/input union is structurally assignable to `HTMLDivElement`
+// and the negative case would never fail.
+atom.commands.add(elementUnion, "my-package:run", (event) => {
+  // @ts-expect-error either half of the union may show up
+  event.currentTarget satisfies HTMLInputElement;
+});
+
+// A bare `string` says nothing about the element, even though some strings
+// (`"div"`) would.
+declare const selector: string;
+atom.commands.add(selector, "my-package:run", (event) => {
+  event.currentTarget satisfies EventTarget;
+});
+
+atom.commands.add(selector, "my-package:run", (event) => {
+  // @ts-expect-error a `string` of unknown content is not a known tag name
+  event.currentTarget satisfies HTMLDivElement;
+});
+
+// The listener parameter is contravariant, so a listener annotated for a
+// specific element is correctly rejected for a target that may not be one.
+// The directive sits above the call, not above the argument: an overload
+// mismatch is reported at the call head.
+// @ts-expect-error the target may be an arbitrary selector
+atom.commands.add(
+  unionTarget,
+  "my-package:run",
+  (event: CommandEvent<HTMLInputElement>) => event.currentTarget,
+);
 
 // ---------------------------------------------------------------------------
 // Querying and dispatching

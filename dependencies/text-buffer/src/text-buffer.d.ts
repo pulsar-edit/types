@@ -6,6 +6,8 @@ import {
   HistoryTransactionOptions,
   HistoryTraversalOptions,
   LanguageMode,
+  MarkerLayerOptions,
+  MarkerOptions,
   TextEditOptions
 } from "../../../index";
 import {
@@ -315,13 +317,7 @@ export class TextBuffer {
   // Markers
 
   /** Create a layer to contain a set of related markers. */
-  addMarkerLayer(
-    options?: {
-      maintainHistory?: boolean | undefined;
-      persistent?: boolean | undefined;
-      role?: string | undefined;
-    },
-  ): MarkerLayer;
+  addMarkerLayer(options?: MarkerLayerOptions): MarkerLayer;
 
   /**
    * Get a MarkerLayer by ID.
@@ -336,11 +332,7 @@ export class TextBuffer {
   /** Create a marker with the given range in the default marker layer. */
   markRange(
     range: RangeCompatible,
-    properties?: {
-      reversed?: boolean | undefined;
-      invalidate?: "never" | "surround" | "overlap" | "inside" | "touch" | undefined;
-      exclusive?: boolean | undefined;
-    },
+    properties?: MarkerOptions,
   ): Marker;
 
   /**
@@ -349,10 +341,7 @@ export class TextBuffer {
    */
   markPosition(
     position: PointCompatible,
-    options?: {
-      invalidate?: "never" | "surround" | "overlap" | "inside" | "touch" | undefined;
-      exclusive?: boolean | undefined;
-    },
+    options?: Omit<MarkerOptions, 'reversed'>,
   ): Marker;
 
   /** Get all existing markers on the default marker layer. */
@@ -628,8 +617,11 @@ export class TextBuffer {
   ): Disposable;
 }
 
+/**
+ * The "file" interface expected by `TextBuffer`.
+ */
 export interface TextBufferFileBackend {
-  /** A {Function} that returns the {String} path to the file. */
+  /** Returns the absolute path to the file. */
   getPath(): string;
 
   /**
