@@ -59,6 +59,19 @@ export class TextBuffer {
    */
   static deserialize(params: object): Promise<TextBuffer>;
 
+  /**
+   * Extended: Notify a text buffer that its backing file may have been
+   * restored and attempt to "resurrect" it from a deleted state.
+   *
+   * `TextBuffer` can detect when a file is modified, but cannot detect on its
+   * own when a deleted file is restored.
+   *
+   * Instead, this method exists as an easy way for an external file-watcher to
+   * signal to `TextBuffer` that this buffer's backing file may exist
+   * once again.
+   */
+  resurrect(): Promise<TextBuffer | undefined>;
+
   /** Create a new buffer with the given starting text. */
   constructor(text: string);
   /** Create a new buffer with the given params. */
@@ -121,6 +134,22 @@ export class TextBuffer {
 
   /** Invokes the given callback if the value of {@link isModified} changes. */
   onDidChangeModified(callback: (modified: boolean) => void): Disposable;
+
+  /**
+   * Invokes the given callback when the buffer's "deleted" state changes.
+   *
+   * Unlike {@link onDidDelete}, this callback will fire when a buffer's
+   * "deleted" state is removed, not just when it is added.
+   */
+  onDidChangeDeleted(callback: (isDeleted: boolean) => void): Disposable;
+
+  /**
+   * Invoke the given callback when the buffer's "conflicted" state is changed.
+   *
+   * Unlike {@link onDidConflict}, this callback will fire when a buffer's
+   * "conflicted" state is removed, not just when it is added.
+   */
+  onDidChangeConflicted(callback: (isConflicted: boolean) => void): Disposable;
 
   /**
    * Invokes the given callback when all marker {@link onDidChange} observers
@@ -189,6 +218,12 @@ export class TextBuffer {
    * If the buffer is unsaved, always returns true unless the buffer is empty.
    */
   isModified(): boolean;
+
+  /**
+   * Determine if the buffer is in a deleted state — meaning that it was
+   * previously backed by a file on disk, but is no longer.
+   */
+  isDeleted(): boolean;
 
   /**
    * Determine if the in-memory contents of the buffer conflict with the

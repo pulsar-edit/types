@@ -26,8 +26,8 @@ import {
 
 
 /**
- *  Atom global for dealing with packages, themes, menus, and the window.
- *  An instance of this class is always available as the atom global.
+ * Atom global for dealing with packages, themes, menus, and the window. An
+ * instance of this class is always available as the `atom` global.
  */
 export interface AtomEnvironment {
   // Properties
@@ -92,16 +92,22 @@ export interface AtomEnvironment {
   readonly ui: UI;
 
   // Event Subscription
-  /** Invoke the given callback whenever ::beep is called. */
+  /** Invokes the given callback whenever ::beep is called. */
   onDidBeep(callback: () => void): Disposable;
 
   /**
-   * Invoke the given callback when there is an unhandled error, but before the
+   * Invokes the given callback when the environment is destroying, as happens
+   * during window close or reload.
+   */
+  onWillDestroy(callback: () => void): Disposable;
+
+  /**
+   * Invokes the given callback when there is an unhandled error, but before the
    * devtools pop open.
    */
   onWillThrowError(callback: (event: PreventableExceptionThrownEvent) => void): Disposable;
 
-  /** Invoke the given callback whenever there is an unhandled error. */
+  /** Invokes the given callback whenever there is an unhandled error. */
   onDidThrowError(callback: (event: ExceptionThrownEvent) => void): Disposable;
 
   /**
@@ -205,6 +211,35 @@ export interface AtomEnvironment {
 
   /** Toggle the full screen state of the current window. */
   toggleFullScreen(): void;
+
+  /** Moves an item to the trash. */
+  trashItem(filePath: string): Promise<void>;
+
+  /**
+   * Reveals the given path in the system's file browser, selecting it if
+   * possible.
+   */
+  showItemInFolder(filePath: string): Promise<void>;
+
+  /**
+   * Opens the given path in the default manner for the operating system.
+   *
+   * For instance: if you pass the path to a directory, will likely open that
+   * directory in a file browser. If you pass the path to an image file, will
+   * likely open that image file in a web browser or an image editing
+   * application.
+   */
+  openPath(filePath: string): Promise<void>;
+
+  /**
+   * Extended: Opens the given URL in the default manner for the operating
+   * system.
+   *
+   * For instance: passing an `https:` URI will open it in the default web
+   * browser, and passing a `mailto:` URI will open it in the default mail
+   * client.
+   */
+  openExternal(url: string): Promise<void>;
 
   /**
    * Restores the full screen and maximized state after the window has resized

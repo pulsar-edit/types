@@ -206,10 +206,10 @@ export interface Selection {
   selectToBeginningOfPreviousParagraph(): void;
 
   /** Modifies the selection to encompass the current word. */
-  selectWord(options?: SelectWordOptions): void;
+  selectWord(options?: SelectWordOptions): Range;
 
   /** Modifies the selection to encompass the current subword. */
-  selectSubword(options?: SelectWordOptions): void;
+  selectSubword(options?: SelectWordOptions): Range;
 
   /**
    * Expands the newest selection to include the entire word on which the

@@ -144,9 +144,28 @@ export class TextEditor {
 
   /**
    * Calls your callback when the buffer's underlying file changes on disk at a
-   * moment when the result of ::isModified is true.
+   * moment when the result of {@link isModified} is true.
    */
   onDidConflict(callback: () => void): Disposable;
+
+  /**
+   * Calls your callback when the buffer's underlying file is deleted on disk.
+   */
+  onDidDelete(callback: () => void): Disposable;
+
+  /**
+   * Calls your callback when the result of {@link isDeleted} changes. Unlike
+   * {@link onDidDelete}, this also fires when a deleted file is restored.
+   */
+  onDidChangeDeleted(callback: (isDeleted: boolean) => void): Disposable;
+
+  /**
+   * Calls your callback when the result of {@link isInConflict} changes.
+   *
+   * Unlike {@link onDidConflict}, this also fires when conflicted status is
+   * removed from the editor.
+   */
+  onDidChangeConflicted(callback: (isConflicted: boolean) => void): Disposable;
 
   /** Calls your callback before text has been inserted. */
   onWillInsertText(callback: (event: { text: string; cancel(): void }) => void): Disposable;
@@ -220,8 +239,41 @@ export class TextEditor {
   /** Return the string path of this editor's text buffer. */
   getPath(): string | undefined;
 
+  /**
+   * Returns the file name of this editor's text buffer, or `undefined` if the
+   * buffer is not associated with a file on disk.
+   */
+  getFileName(): string | undefined;
+
+  /**
+   * Returns the parent directory of this editor's text buffer, or `undefined`
+   * if the buffer is not associated with a file on disk.
+   */
+  getDirectoryPath(): string | undefined;
+
   /** Return boolean true if this editor has been modified. */
   isModified(): boolean;
+
+  /**
+   * Returns `true` if this editor's buffer is in conflict — that is, if the
+   * buffer is modified _and_ those modifications are based on file contents
+   * that are different from what currently exists on disk.
+   *
+   * This can happen if another process write to a file after you start to edit
+   * it in Pulsar, but before you're able to save those changes. It can also
+   * happen if you switch branches in version control while a certain buffer
+   * has uncommitted changes.
+   */
+  isInConflict(): boolean;
+
+  /**
+   * Returns `true` if this editor's backing file was deleted.
+   *
+   * Will return `false` if the editor's buffer _never_ was associated with a
+   * file on disk, or if the buffer was re-saved to the same location or a
+   * different one.
+   */
+  isDeleted(): boolean;
 
   /** Return boolean true if this editor has no content. */
   isEmpty(): boolean;
@@ -977,6 +1029,9 @@ export class TextEditor {
 
   /** Select the word surrounding each cursor. */
   selectWordsContainingCursors(): void;
+
+  /** Select the subword surrounding each cursor. */
+  selectSubwordsContainingCursors(): void;
 
   /**
    * For each selection, move its cursor to the preceding subword boundary
