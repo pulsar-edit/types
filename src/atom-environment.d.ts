@@ -228,6 +228,9 @@ export interface AtomEnvironment {
    * directory in a file browser. If you pass the path to an image file, will
    * likely open that image file in a web browser or an image editing
    * application.
+   *
+   * Will eventually reject if the OS never finishes opening the path (as may
+   * happen if there is no application associated with the given file type).
    */
   openPath(filePath: string): Promise<void>;
 
@@ -238,6 +241,9 @@ export interface AtomEnvironment {
    * For instance: passing an `https:` URI will open it in the default web
    * browser, and passing a `mailto:` URI will open it in the default mail
    * client.
+   *
+   * Will eventually reject if the OS never finishes opening the URL (as may
+   * happen if there is no application associated with the given URL scheme).
    */
   openExternal(url: string): Promise<void>;
 

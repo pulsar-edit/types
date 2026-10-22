@@ -60,8 +60,8 @@ export class TextBuffer {
   static deserialize(params: object): Promise<TextBuffer>;
 
   /**
-   * Extended: Notify a text buffer that its backing file may have been
-   * restored and attempt to "resurrect" it from a deleted state.
+   * Notify a text buffer that its backing file may have been restored and
+   * attempt to "resurrect" it from a deleted state.
    *
    * `TextBuffer` can detect when a file is modified, but cannot detect on its
    * own when a deleted file is restored.

@@ -236,7 +236,7 @@ export class TextEditor {
    */
   getLongTitle(): string;
 
-  /** Return the string path of this editor's text buffer. */
+  /** Return the string path of this editor's text buffer, if one exists. */
   getPath(): string | undefined;
 
   /**
